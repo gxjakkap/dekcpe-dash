@@ -7,9 +7,19 @@ import { db } from "@/db"
 import { user, session, account, verification } from "@/db/schema"
 import { ROLES } from "./const"
 
+console.log("Using AUTH_URL:", process.env.AUTH_URL)
+
 export const auth = betterAuth({
-    baseURL: process.env.AUTH_URL || "http://localhost:4000",
-    secret: process.env.AUTH_SECRET || "supersecretkey",
+    baseURL: (() => {
+        const url = process.env.AUTH_URL
+        try {
+            return new URL(url ?? "").toString()
+        } 
+        catch {
+            return "http://localhost:4000"
+        }
+    })(),
+        secret: process.env.AUTH_SECRET || "supersecretkey",
     database: drizzleAdapter(db, {
         provider: "pg",
         schema: {
