@@ -20,11 +20,11 @@ RUN bun build
 
 FROM base AS runner
 WORKDIR /app
-RUN addgroup --system --gid 1001 bun
+RUN addgroup --system --gid 1001 apprunner
 RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:bun /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:bun /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:apprunner /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:apprunner /app/.next/static ./.next/static
 USER nextjs
 EXPOSE 4000
 ENV PORT=4000
