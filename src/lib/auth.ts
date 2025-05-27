@@ -10,16 +10,8 @@ import { ROLES } from "./const"
 console.log("Using AUTH_URL:", process.env.AUTH_URL)
 
 export const auth = betterAuth({
-    baseURL: (() => {
-        const url = process.env.AUTH_URL
-        try {
-            return new URL(url ?? "").toString()
-        } 
-        catch {
-            return "http://localhost:4000"
-        }
-    })(),
-        secret: process.env.AUTH_SECRET || "supersecretkey",
+    baseURL: process.env.AUTH_URL ?? "https://dash.dekcpe.link/",
+    secret: process.env.AUTH_SECRET ?? "supersecretkey",
     database: drizzleAdapter(db, {
         provider: "pg",
         schema: {
