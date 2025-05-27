@@ -15,6 +15,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+ENV BETTER_AUTH_SECRET=build-time-secret-placeholder
+ENV BETTER_AUTH_URL=http://localhost:4000
 RUN bun run build
 
 FROM base AS runner
