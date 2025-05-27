@@ -16,7 +16,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 ENV AUTH_SECRET=build-time-secret-placeholder
-ENV AUTH_URL=http://localhost:4000
+ENV AUTH_URL=https://dash.dekcpe.link/
 RUN bun run build
 
 FROM base AS runner
