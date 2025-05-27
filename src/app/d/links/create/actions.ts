@@ -6,7 +6,7 @@ import { CustomError } from "@/lib/errors"
 import { authorizedProcedure } from "@/lib/server-actions"
 import { eq } from "drizzle-orm"
 import z from "zod"
-import * as Crypto from "node:crypto"
+import * as Crypto from "crypto"
 
 const RANDOM_SLUG_LENGTH = 8
 
