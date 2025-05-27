@@ -8,6 +8,8 @@ import { user, session, account, verification } from "@/db/schema"
 import { ROLES } from "./const"
 
 export const auth = betterAuth({
+    baseURL: process.env.AUTH_URL || "http://localhost:4000",
+    secret: process.env.AUTH_SECRET || "supersecretkey",
     database: drizzleAdapter(db, {
         provider: "pg",
         schema: {
