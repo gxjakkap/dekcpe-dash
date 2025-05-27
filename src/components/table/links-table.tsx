@@ -39,7 +39,7 @@ export function LinksTable(props: LinksTableProps) {
               accessorKey: "slug",
               header: "Link",
               cell: ({ row }) => (
-                  <div>{(new URL(row.getValue("slug"), process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL!)).toString()}</div>
+                  <div>{(new URL(row.getValue("slug"), process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/")).toString()}</div>
               ),
           },
           {

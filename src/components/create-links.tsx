@@ -56,7 +56,7 @@ export default function CreateLinkForm(){
                                     <FormLabel className="text-lg">Slug</FormLabel>
                                     <FormControl>
                                         <div className="flex gap-x-2">
-                                            <span className="text-foreground/50 my-auto">{new URL("/", process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL!).toString()}</span>
+                                            <span className="text-foreground/50 my-auto">{(`${process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "dekcpe.link"}`).replace("https://", "").replace("http://", "")}</span>
                                             <Input placeholder={"slug (leave blank to auto-generate)"} {...field} className="flex-1 w-full" />
                                         </div>
                                     </FormControl>
@@ -101,10 +101,10 @@ export default function CreateLinkForm(){
                         </AlertDialogDescription>
                         {(successDialogOpen && genQr) && (
                             <div className="flex flex-col gap-y-1 mx-auto my-4">
-                                <img src={`https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${(new URL('?utm_source=dekcpe-qr', shortLink))}`} alt="qrcode" width={300} height={300} />
+                                <img src={`https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/"}${shortLink}?utm_source=dekcpe-qr`} alt="qrcode" width={300} height={300} />
                                 <a 
                                     className="underline text-blue-600 hover:text-sky-500 text-center"
-                                    href={`https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${(new URL('?utm_source=dekcpe-qr', shortLink))}`} 
+                                    href={`https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/"}${shortLink}?utm_source=dekcpe-qr`} 
                                     target="_blank"
                                     rel="noopener, noreferer"
                                     download

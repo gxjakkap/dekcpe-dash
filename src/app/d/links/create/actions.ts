@@ -42,6 +42,6 @@ export const createShortLink = authorizedProcedure
 
         return {
             status: 201,
-            link: (new URL(sl, process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL!)).toString()
+            link: (new URL(sl, process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/")).toString()
         }
     })
