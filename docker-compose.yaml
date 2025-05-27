@@ -79,6 +79,8 @@ services:
     environment:
       - POSTGRES_LOG_STATEMENT=all
       - POSTGRES_LOG_CONNECTIONS=true
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DBNAME}
     ports:
       - "5432:5432"
     healthcheck:
