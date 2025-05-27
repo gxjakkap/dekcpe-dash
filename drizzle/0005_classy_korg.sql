@@ -1,0 +1,1 @@
+ALTER TABLE "clicks" ALTER COLUMN "geolocation" SET DATA TYPE jsonb USING geolocation::jsonb;

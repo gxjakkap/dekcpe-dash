@@ -1,0 +1,1 @@
+ALTER TABLE "invite" DROP COLUMN "status";

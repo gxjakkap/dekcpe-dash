@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    user: postgres
+    env_file: ".env"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DBNAME}
+      - POSTGRES_LOG_STATEMENT=all
+      - POSTGRES_LOG_CONNECTIONS=true
+      - TZ=${PG_TIMEZONE}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  db-data:

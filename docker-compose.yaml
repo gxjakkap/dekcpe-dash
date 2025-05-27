@@ -1,0 +1,94 @@
+services:
+  watchtower:
+    image: containrrr/watchtower
+    command:
+      - "--label-enable"
+      - "--interval"
+      - "30"
+      - "--rolling-restart"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  reverse-proxy:
+    image: traefik:v3.1
+    command:
+      - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--ping=true"
+      - "--ping.entryPoint=ping"
+      - "--entrypoints.server.address=:3000"
+      - "--entrypoints.dash.address=:4000"
+      - "--entrypoints.ping.address=:8082"
+    ports:
+      - "3000:3000"
+      - "4000:4000"
+      - "8082:8082"
+    depends_on:
+      - dash
+      - server
+    networks:
+      - main
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  server:
+    image: ghcr.io/gxjakkap/dekcpe.link:main
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.server.rule=Host(`dekcpe.link`)"
+      - "traefik.http.services.server.loadbalancer.server.port=3000"
+      - "com.centurylinklabs.watchtower.enable=true"
+    env_file: ".env"
+    deploy:
+      mode: replicated
+      replicas: 2
+    restart: always
+    networks:
+      - main
+    depends_on:
+      db:
+        condition: service_healthy
+
+  dash:
+    image: ghcr.io/gxjakkap/dekcpe-dash:main
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dash.rule=Host(`dash.dekcpe.link`)"
+      - "traefik.http.services.dash.loadbalancer.server.port=4000"
+      - "com.centurylinklabs.watchtower.enable=true"
+    env_file: ".env"
+    deploy:
+      mode: replicated
+      replicas: 2
+    restart: always
+    networks:
+      - main
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres
+    restart: always
+    user: postgres
+    env_file: ".env"
+    networks:
+      - main
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_LOG_STATEMENT=all
+      - POSTGRES_LOG_CONNECTIONS=true
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  db-data:
+
+networks:
+  main:
+    driver: bridge
