@@ -1,9 +1,10 @@
 import { count, eq } from "drizzle-orm"
-import { CopyPlus, Plus } from "lucide-react"
+import { BarChart3, Clock, CopyPlus, LinkIcon, Plus } from "lucide-react"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 
 import { LinksColumn, LinksTable } from "@/components/table/links-table"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { db } from "@/db"
 import { links, clicks } from "@/db/schema"
@@ -33,9 +34,9 @@ export default async function LinksPage() {
         .leftJoin(clicks, eq(links.id, clicks.linkId))
         .where(eq(links.owner, session.user.id))
         .groupBy(links.id)
-
-    const linksData: LinksColumn[] = usersLinks.map(link => ({
-        id: link.id,
+    
+    const linksData: LinksColumn[] = usersLinks.map((link) => ({
+        id: link.id.toString(),
         slug: link.slug,
         url: link.url,
         createdAt: link.createdAt,
@@ -44,34 +45,71 @@ export default async function LinksPage() {
         clickCount: link.clickCount,
     }))
 
-    console.log(linksData)
+    const totalLinks = linksData.length
+    const totalClicks = linksData.reduce((sum, link) => sum + link.clickCount, 0)
 
-    return (
-        <div className="flex flex-col min-h-screen w-full pt-4 gap-y-4">
-            <h3 className="text-3xl">Your links</h3>
-            <div className="flex justify-end gap-x-3 w-full">
-                <Link
-                    href={'/d/links/create'}
-                >
-                    <Button>
-                        <Plus />
-                        Create new link
-                    </Button>
-                </Link>
-                {/* <Link
-                    href={'/d/links/create-multiple'}
-                >
-                    <Button
-                        variant="secondary"
-                    >
-                        <CopyPlus />
-                        Create multiple links
-                    </Button>
-                </Link> */}
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Your Links</h1>
+              </div>
+              <p className="text-base md:text-xl text-muted-foreground">Manage your links</p>
             </div>
-            <LinksTable
-                data={linksData}
-            />
+            <Link href={"/d/links/create"}>
+              <Button size="lg" className="gap-2">
+                <Plus className="h-4 w-4" />
+                Create New Link
+              </Button>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-6">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <LinkIcon className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Links</p>
+                    <p className="text-2xl font-bold">{totalLinks}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <BarChart3 className="h-4 w-4 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Clicks</p>
+                    <p className="text-2xl font-bold">{totalClicks}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-    )
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <LinkIcon className="h-5 w-5" />
+              All Links
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-6">
+            <LinksTable data={linksData} />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
 }

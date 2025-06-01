@@ -49,6 +49,8 @@ import { DataTableSkeleton } from "./skeleton";
 import { DataTableToolbar } from "./toolbar";
 import { redirect, RedirectType } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { propagateServerField } from "next/dist/server/lib/render-server";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -61,6 +63,7 @@ interface DataTableProps<TData, TValue> {
   rowClickable?: boolean;
   hrefColumn?: ColumnDef<TData, TValue> & { accessorKey: keyof TData };
   hrefPrefix?: string;
+  className?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -71,7 +74,8 @@ export function DataTable<TData, TValue>({
   isLoading,
   rowClickable,
   hrefColumn,
-  hrefPrefix
+  hrefPrefix,
+  className
 }: DataTableProps<TData, TValue>) {
   const queryStateOptions = useMemo<
     Omit<UseQueryStateOptions<string>, "parse">
@@ -240,7 +244,7 @@ export function DataTable<TData, TValue>({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className={cn("flex flex-col gap-4", className)}>
       <div className="flex gap-x-5">
         <Input
             placeholder="Search"

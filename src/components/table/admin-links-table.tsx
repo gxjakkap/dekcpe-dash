@@ -3,27 +3,26 @@
 import type { InitialStateTablePage } from "@/types"
 import type { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "./tablecomponents"
-import { Badge } from "@/components/ui/badge"
 import { ExternalLink, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-export interface LinksColumn {
+export interface AdminLinksColumn {
   id: string
   slug: string
   url: string
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
-  clickCount: number
+  owner: string
 }
 
-interface LinksTableProps {
-  data: LinksColumn[]
+interface AdminLinksTableProps {
+  data: AdminLinksColumn[]
   initialState?: InitialStateTablePage
 }
 
-export function LinksTable(props: LinksTableProps) {
-  const columns: (ColumnDef<LinksColumn> & { accessorKey: string })[] = [
+export function AdminLinksTable(props: AdminLinksTableProps) {
+  const columns: (ColumnDef<AdminLinksColumn> & { accessorKey: string })[] = [
     {
       accessorKey: "idx",
       header: "#",
@@ -76,14 +75,13 @@ export function LinksTable(props: LinksTableProps) {
       },
     },
     {
-      accessorKey: "clickCount",
-      header: "Clicks",
+      accessorKey: "owner",
+      header: "Owner",
       cell: ({ row }) => {
-        const clicks = row.getValue("clickCount") as number
         return (
-          <Badge variant={clicks > 0 ? "default" : "secondary"} className="font-mono">
-            {clicks.toLocaleString()}
-          </Badge>
+          <div className="">
+            {row.getValue("owner")}
+          </div>
         )
       },
     },
@@ -102,10 +100,10 @@ export function LinksTable(props: LinksTableProps) {
       data={props.data}
       initialState={props.initialState}
       rowClickable={true}
-      hrefPrefix="d/link/"
+      hrefPrefix="d/a/link/"
       hrefColumn={
         columns.find(
-          (c): c is ColumnDef<LinksColumn> & { accessorKey: keyof LinksColumn } => c.accessorKey === "slug",
+          (c): c is ColumnDef<AdminLinksColumn> & { accessorKey: keyof AdminLinksColumn } => c.accessorKey === "slug",
         ) ?? undefined
       }
       isLoading={false}

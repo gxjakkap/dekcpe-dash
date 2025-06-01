@@ -33,13 +33,14 @@ interface NavbarProps {
 }
 
 const HOME_URL = `${process.env.NEXT_PUBLIC_BASE_URL!}`;
+const DASH_URL = (new URL('/d', process.env.NEXT_PUBLIC_BASE_URL!)).toString()
 
 const MOBILE_LINKS = [
-  { text: "Dashboard", href: `${HOME_URL}/d` },
+  { text: "Dashboard", href: DASH_URL },
 ]
 
 const ACTIONS: NavbarActionProps[] = [
-  { text: "Sign in", href: `${HOME_URL}/d`, isButton: true, variant: "default" },
+  { text: "Sign in", href: DASH_URL, isButton: true, variant: "default" },
 ]
 
 export default function Navbar({

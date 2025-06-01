@@ -13,7 +13,6 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "./navigation-menu";
-import LaunchUI from "../logos/launch-ui";
 import { ReactNode } from "react";
 
 interface ComponentItem {
@@ -96,7 +95,7 @@ export default function Navigation({
         "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
     },
   ],
-  logo = <LaunchUI />,
+  logo = <></>,
   logoTitle = "Launch UI",
   logoDescription = "Landing page template built with React, Shadcn/ui and Tailwind that you can copy/paste into your project.",
   logoHref = "https://www.launchuicomponents.com/",

@@ -5,6 +5,8 @@ import { db } from "@/db"
 import { invite, inviteUsage, user } from "@/db/schema"
 import { auth } from "@/lib/auth"
 import { AdminInviteTable, InviteColumn } from "@/components/table/admin-invites-table"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { SendIcon } from "lucide-react"
 
 export default async function CreateLinkPage() {
     const session = await auth.api.getSession({
@@ -36,11 +38,32 @@ export default async function CreateLinkPage() {
     console.log(invitesData)
 
     return (
-        <div className="flex flex-col min-h-screen w-full pt-4">
-            <h3 className="text-3xl">Invites</h3>
-            <AdminInviteTable
-                data={invitesData}
-            />
+        <div className="min-h-screen bg-background">
+            <div className="container mx-auto px-4 py-8 max-w-7xl">
+                <div className="mb-8">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <div className="flex items-center gap-3 mb-2">
+                            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Invites</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <Card>
+                    <CardHeader className="pt-4">
+                        <CardTitle className="text-lg flex items-center gap-2 ml-4">
+                            <SendIcon className="h-5 w-5" />
+                            All Invites
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="px-6">
+                        <AdminInviteTable
+                            data={invitesData}
+                        />
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     )
 }

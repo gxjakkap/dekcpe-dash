@@ -20,7 +20,7 @@ const formSchema = z.object({
 })
 
 export default function CreateLinkForm(){
-    const { isPending, execute, data, error } = useServerAction(createShortLink)
+    const { execute } = useServerAction(createShortLink)
     const [genQr, setGenQr] = useState(false)
     const [shortLink, setShortLink] = useState("")
     const [successDialogOpen, setSuccessDialogOpen] = useState(false)

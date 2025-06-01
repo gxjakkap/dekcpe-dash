@@ -1,8 +1,13 @@
 import { createAuthClient } from "better-auth/react"
 
+function getAuthURL() {
+    console.log(process.env.AUTH_URL)
+    return process.env.AUTH_URL
+}
+
 
 export const authClient = createAuthClient({
-    baseURL: process.env.AUTH_URL ?? "https://dash.dekcpe.link/",
+    baseURL: getAuthURL(),
 })
 
 export const { signIn, signOut, signUp, useSession } = authClient

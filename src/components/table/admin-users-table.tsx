@@ -373,7 +373,7 @@ export function AdminUserTable({ data }: UserTableProps) {
     })
     
     return (
-        <div className="mx-10">
+        <div className="md:mx-10">
             <div className="flex items-center py-4">
                 {/* <Input
                     placeholder="Search"

@@ -1,4 +1,4 @@
-import { ChartNoAxesCombined, ChevronUp, Home, LinkIcon, Plus, Send, Unlink, User2, Users } from "lucide-react"
+import { ChartNoAxesCombined, ChevronUp, Home, LinkIcon, LogOut, Plus, Send, Unlink, User2, Users } from "lucide-react"
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { Button } from "./ui/button"
@@ -32,7 +32,7 @@ const adminItems = [
     },
     {
         title: "Manage All Links",
-        url: "/d/a/links",
+        url: "/d/a/all ",
         icon: Unlink
     },
     {
@@ -98,7 +98,7 @@ export function DashboardSidebar({ isAdmin, name }: DashboardSidebarProps) {
                 </SidebarGroup>
             )}
         </SidebarContent>
-        <SidebarFooter>
+        <SidebarFooter className="mb-10">
             <SidebarMenu>
                 <SidebarMenuItem>
                 <DropdownMenu>
@@ -113,6 +113,7 @@ export function DashboardSidebar({ isAdmin, name }: DashboardSidebarProps) {
                         className="w-[--radix-popper-anchor-width] z-50"
                     >
                         <DropdownMenuItem
+                            className="flex spaxe-x-2"
                             onClick={() => {
                                 authClient.signOut({
                                     fetchOptions: {
@@ -123,7 +124,8 @@ export function DashboardSidebar({ isAdmin, name }: DashboardSidebarProps) {
                                 })
                             }}
                         >
-                            Sign Out
+                            <LogOut className="text-muted-foreground w-4 h-4" />
+                            <span>Sign Out</span>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

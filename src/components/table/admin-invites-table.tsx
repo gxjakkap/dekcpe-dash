@@ -322,8 +322,7 @@ const createColumns = (): ColumnDef<InviteColumn>[] => [
         accessorKey: "id",
         header: "ID",
         cell: ({ row }) => {
-            const shrt = (row.getValue("id") as string)
-            return <div>{shrt}</div>
+            return <div className="mx-auto">{row.getValue("id")}</div>
         },
     },
     {
@@ -339,7 +338,7 @@ const createColumns = (): ColumnDef<InviteColumn>[] => [
         cell: ({ row }) => {
             const dateValue = row.getValue("creationDate");
             return (
-                <div>
+                <div className="mx-auto">
                     {dateValue ? format(dateValue as Date, "PPP") : ""}
                 </div>
             );
@@ -358,7 +357,7 @@ const createColumns = (): ColumnDef<InviteColumn>[] => [
         cell: ({ row }) => {
             const maxUses = row.getValue("maxUses");
             return (
-                <div>{maxUses === -1 ? "Unlimited" : maxUses?.toString()}</div>
+                <div className="">{maxUses === -1 ? "∞" : maxUses?.toString()}</div>
             )
         },
     },
@@ -366,7 +365,7 @@ const createColumns = (): ColumnDef<InviteColumn>[] => [
         accessorKey: "currentUses",
         header: "Current Uses",
         cell: ({ row }) => (
-            <div>{row.getValue("currentUses")}</div>
+            <div className="">{row.getValue("currentUses")}</div>
         ),
     },
     {
@@ -376,7 +375,7 @@ const createColumns = (): ColumnDef<InviteColumn>[] => [
             const dateValue = row.getValue("expirationDate");
             return (
                 <div>
-                    {dateValue ? format(dateValue as Date, "PPP") : ""}
+                    {dateValue ? format(dateValue as Date, "PPP") : "Never Expires"}
                 </div>
             );
         },
@@ -468,7 +467,7 @@ export function AdminInviteTable({ data }: InviteTableProps) {
     
     return (
         <>
-            <div className="mx-10">
+            <div className="md:mx-10">
                 <div className="flex items-center py-4 gap-x-2">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
