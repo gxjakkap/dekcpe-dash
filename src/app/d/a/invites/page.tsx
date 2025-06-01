@@ -34,9 +34,7 @@ export default async function CreateLinkPage() {
             usedBy: inviteUsages.filter(u => u.inviteId === x.id).map(u => userMap.get(u.userId)?.name).filter((name): name is string => !!name)
         }
     })
-
-    console.log(invitesData)
-
+    
     return (
         <div className="min-h-screen bg-background">
             <div className="container mx-auto px-4 py-8 max-w-7xl">

@@ -406,7 +406,6 @@ export function AdminInviteTable({ data }: InviteTableProps) {
     )
 
     const handleCreate = async (data: z.infer<typeof addFormSchema>) => {
-        console.log(data)
         startCreateTransition(async () => {
             try {
                 const [res, err] = await createInviteCode(data)

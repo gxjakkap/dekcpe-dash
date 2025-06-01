@@ -1,7 +1,7 @@
 "use server"
 
 import { eq } from "drizzle-orm"
-import * as dayjs from "dayjs"
+import dayjs from "dayjs"
 import z from "zod"
 
 import { RedeemInviteCodeStatus } from "./types"
@@ -28,11 +28,8 @@ export const redeemInviteCode = authedProcedure
             }
         }
 
-        const exp = new dayjs.Dayjs(res.expirationDate)
-        const now = new dayjs.Dayjs(new Date())
-
-        console.log(`exp: ${exp.toISOString}`)
-        console.log(`now: ${now.toISOString()}`)
+        const exp = dayjs(res.expirationDate)
+        const now = dayjs()
 
         if (!!res.expirationDate && exp.isBefore(now)){
             return {
@@ -43,7 +40,7 @@ export const redeemInviteCode = authedProcedure
 
         const usesRes = await db.select().from(inviteUsage).where(eq(inviteUsage.inviteId, res.id))    
 
-        if (usesRes.length >= res.maxUses){
+        if (res.maxUses !== -1 && usesRes.length >= res.maxUses){
             return {
                 status: RedeemInviteCodeStatus.MAX_USED,
                 code: code

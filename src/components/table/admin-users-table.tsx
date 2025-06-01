@@ -196,7 +196,6 @@ const ActionCell = ({ row }: { row: Row<UserColumn> }) => {
     const data = row.original
 
     const handleUpdate = async (data: Partial<UserColumn>) => {
-        console.log(data)
         startTransition(async () => {
             try {
                 await updateUser({

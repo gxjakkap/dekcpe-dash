@@ -12,7 +12,6 @@ interface QuickAnalyticsTopDevicesTableProps {
 }
 
 export function QuickAnalyticsTopDevicesTable(props: QuickAnalyticsTopDevicesTableProps) {
-    console.log(props.data)
     return (
         <div>
         <div className="bg-background overflow-hidden rounded-md border">

@@ -35,6 +35,7 @@ export function RedeemForm() {
 
                 if (!res || !!error){
                     toast(`Error occurred! (${error.message})`)
+                    console.log(error)
                     return
                 }
 
