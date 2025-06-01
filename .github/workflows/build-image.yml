@@ -36,6 +36,11 @@ jobs:
       - name: Build and push Docker image
         id: push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        env:
+          AUTH_SECRET: ${{ env.AUTH_SECRET }}
+          AUTH_URL: ${{ env.AUTH_URL }}
+          NEXT_PUBLIC_BASE_URL: ${{ env.NEXT_PUBLIC_BASE_URL }}
+          NEXT_PUBLIC_SHORTLINK_BASE_URL: ${{ env.NEXT_PUBLIC_SHORTLINK_BASE_URL }}
         with:
           context: .
           file: Dockerfile
