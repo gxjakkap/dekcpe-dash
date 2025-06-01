@@ -30,7 +30,7 @@ interface HeroProps {
 }
 
 const siteConfig = {
-  getStartedUrl: (new URL('/d', process.env.NEXT_PUBLIC_BASE_URL!)).toString(),
+  getStartedUrl: (new URL('/d', "https://dash.dekcpe.link/")).toString(),
   links: {
     github: "https://github.com/gxjakkap/dekcpe.link",
   },

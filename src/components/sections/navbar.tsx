@@ -32,8 +32,8 @@ interface NavbarProps {
   className?: string;
 }
 
-const HOME_URL = `${process.env.NEXT_PUBLIC_BASE_URL!}`;
-const DASH_URL = (new URL('/d', process.env.NEXT_PUBLIC_BASE_URL!)).toString()
+const HOME_URL = `https://dash.dekcpe.link/`;
+const DASH_URL = (new URL('/d', "https://dash.dekcpe.link/")).toString()
 
 const MOBILE_LINKS = [
   { text: "Dashboard", href: DASH_URL },
