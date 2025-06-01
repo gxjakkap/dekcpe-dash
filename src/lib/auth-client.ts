@@ -2,7 +2,7 @@ import { createAuthClient } from "better-auth/react"
 
 function getAuthURL() {
     console.log(process.env.AUTH_URL)
-    return process.env.AUTH_URL
+    return process.env.AUTH_URL ?? "https://dash.dekcpe.link/"
 }
 
 
