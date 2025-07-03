@@ -15,7 +15,7 @@ import { useServerAction } from "zsa-react"
 import { toast } from "sonner"
 
 const formSchema = z.object({
-    slug: z.string().length(0).or(z.string().min(4, { message: "Custom Slug must be longer than 4 characters" }).regex(/^[a-zA-Z0-9_-]+$/, "Slug must only contain alphanumerica characters, hyphens and underscore.")),
+    slug: z.string().length(0).or(z.string().min(4, { message: "Custom Slug must be longer than 4 characters" }).regex(/^[a-zA-Z0-9_-]+$/, "Slug must only contain alphanumerica characters, hyphens and underscore.")).optional(),
     url: z.string().regex(/^https?:\/\/[^\s<>"]+$/, "Destination URL must be valid."),
 })
 
@@ -101,10 +101,10 @@ export default function CreateLinkForm(){
                         </AlertDialogDescription>
                         {(successDialogOpen && genQr) && (
                             <div className="flex flex-col gap-y-1 mx-auto my-4">
-                                <img src={`https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/"}${shortLink}?utm_source=dekcpe-qr`} alt="qrcode" width={300} height={300} />
+                                <img src={`https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${shortLink}?utm_source=dekcpe-qr`} alt="qrcode" width={300} height={300} />
                                 <a 
                                     className="underline text-blue-600 hover:text-sky-500 text-center"
-                                    href={`https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/"}${shortLink}?utm_source=dekcpe-qr`} 
+                                    href={`https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${shortLink}?utm_source=dekcpe-qr`} 
                                     target="_blank"
                                     rel="noopener, noreferer"
                                     download
@@ -115,7 +115,7 @@ export default function CreateLinkForm(){
                         )}
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogAction onClick={() => window.location.reload()}>Create Another Link</AlertDialogAction>
+                        <AlertDialogAction type="button" color="oklch(70.7% 0.022 261.325)" onClick={() => window.location.reload()}>Create Another Link</AlertDialogAction>
                         <AlertDialogAction onClick={() => {window.location.href = "/d/links"}}>Back to Links page</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

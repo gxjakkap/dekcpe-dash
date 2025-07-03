@@ -1,5 +1,5 @@
-import { count, eq } from "drizzle-orm"
-import { BarChart3, Clock, CopyPlus, LinkIcon, Plus } from "lucide-react"
+import { and, count, desc, eq, isNull } from "drizzle-orm"
+import { BarChart3, LinkIcon, Plus } from "lucide-react"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 
@@ -32,8 +32,9 @@ export default async function LinksPage() {
         })
         .from(links)
         .leftJoin(clicks, eq(links.id, clicks.linkId))
-        .where(eq(links.owner, session.user.id))
+        .where(and(eq(links.owner, session.user.id), isNull(links.deletedAt)))
         .groupBy(links.id)
+        .orderBy(desc(links.createdAt))
     
     const linksData: LinksColumn[] = usersLinks.map((link) => ({
         id: link.id.toString(),

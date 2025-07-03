@@ -18,14 +18,15 @@ export const createShortLink = authorizedProcedure
             .or(z.string()
                 .min(4, { message: "Custom Slug must be longer than 4 characters" })
                 .regex(/^[a-zA-Z0-9_-]+$/, "Slug must only contain alphanumerica characters, hyphens and underscore.")
-            ),
+            )
+            .optional(),
         url: z.string()
             .regex(/^https?:\/\/[^\s<>"]+$/, "Destination URL must be valid."),
     }))
     .handler(async({ input, ctx }) => {
         const { slug, url } = input
         let sl = slug
-        if (sl.length > 0){
+        if (sl && sl.length > 0){
             const [l] = await db.select().from(links).where(eq(links.slug, sl)).limit(1)
             if (l) throw new CustomError("SlugAlreadyExistedError", "This slug already existed!")
         }

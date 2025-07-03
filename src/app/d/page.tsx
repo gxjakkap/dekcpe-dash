@@ -34,8 +34,6 @@ export default async function DashboardHome() {
 
     const { linksCount: totalLinks, clickCount: totalClicks } = result
 
-    const clicksRaw = await db.select().from(clicks)
-
     const topCountries = await db
         .select({
             country: sql<string>`COALESCE(NULLIF(clicks.geolocation->>'Country', ''), 'Unknown')`,

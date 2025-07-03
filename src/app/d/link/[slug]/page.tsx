@@ -4,9 +4,9 @@ import { headers } from "next/headers"
 import { db } from "@/db"
 import { clicks, links } from "@/db/schema"
 import { count, eq } from "drizzle-orm"
-import LinkInfo from "@/components/link-info"
-import LinkActions from "@/components/link-actions"
-import LinkQuickStats from "@/components/link-quick-stats"
+import LinkInfo from "@/components/links/link-info"
+import LinkActions from "@/components/links/link-actions"
+import LinkQuickStats from "@/components/links/link-quick-stats"
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -55,7 +55,7 @@ export default async function LinkPage({ params }: Props) {
           </div>
 
           <div className="xl:col-span-1">
-            <LinkActions />
+            <LinkActions slug={linkRes.slug} dest={linkRes.url} />
             <LinkQuickStats
                 totalClicks={stats.clickCount}
             />
