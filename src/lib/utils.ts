@@ -1,4 +1,3 @@
-import * as Crypto from "node:crypto"
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -7,8 +6,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function generateRandomString(length: number) {
-	return Crypto.randomBytes(Math.ceil(length / 2))
-		.toString("hex")
+	const bytes = crypto.getRandomValues(new Uint8Array(Math.ceil(length / 2)))
+	return Array.from(bytes, (b) => b.toString(16).padStart(2, "0"))
+		.join("")
 		.slice(0, length)
 }
 

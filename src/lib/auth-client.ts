@@ -1,12 +1,6 @@
 import { createAuthClient } from "better-auth/react"
 
-function getAuthURL() {
-	console.log(process.env.AUTH_URL)
-	return process.env.AUTH_URL ?? "https://dash.dekcpe.link/"
-}
-
-export const authClient = createAuthClient({
-	baseURL: getAuthURL(),
-})
+// no baseURL: browser uses the current origin, so it works on any host (prod, local-dash, tailnet)
+export const authClient = createAuthClient()
 
 export const { signIn, signOut, signUp, useSession } = authClient
