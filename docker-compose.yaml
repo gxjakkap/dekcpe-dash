@@ -72,7 +72,7 @@ services:
         condition: service_healthy
 
   db:
-    image: postgres
+    image: postgres:17
     restart: always
     user: postgres
     env_file: ".env"

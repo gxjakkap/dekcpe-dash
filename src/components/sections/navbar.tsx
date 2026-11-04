@@ -1,4 +1,5 @@
 import { Menu } from "lucide-react"
+import Link from "next/link"
 import type { ReactNode } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "../ui/button"
@@ -22,12 +23,12 @@ interface NavbarProps {
 	className?: string
 }
 
-const HOME_URL = `https://dash.dekcpe.link/`
-const DASH_URL = new URL("/d", "https://dash.dekcpe.link/").toString()
+// const HOME_URL = `https://dash.dekcpe.link/`
+// const DASH_URL = new URL("/d", "https://dash.dekcpe.link/").toString()
 
-const MOBILE_LINKS = [{ text: "Dashboard", href: DASH_URL }]
+const MOBILE_LINKS = [{ text: "Dashboard", href: "/d" }]
 
-const ACTIONS: NavbarActionProps[] = [{ text: "Sign in", href: DASH_URL, isButton: true, variant: "default" }]
+const ACTIONS: NavbarActionProps[] = [{ text: "Sign in", href: "/d", isButton: true, variant: "default" }]
 
 export default function Navbar({
 	customActionComponent = null,
@@ -41,9 +42,9 @@ export default function Navbar({
 			<div className="max-w-container relative mx-auto">
 				<NavbarComponent>
 					<NavbarLeft>
-						<a href={HOME_URL} className="flex items-center gap-2 text-xl font-bold">
+						<Link href={"/d"} className="flex items-center gap-2 text-xl font-bold">
 							<h3 className="text-xl font-bold">dekcpe.link 🔗</h3>
-						</a>
+						</Link>
 						{showNavigation && (customNavigation || <Navigation />)}
 					</NavbarLeft>
 					<NavbarRight>
@@ -73,9 +74,9 @@ export default function Navbar({
 							</SheetTrigger>
 							<SheetContent side="right">
 								<nav className="grid gap-6 text-lg font-medium">
-									<a href={HOME_URL} className="flex items-center gap-2 text-xl font-bold">
+									<Link href={"/d"} className="flex items-center gap-2 text-xl font-bold">
 										<span>dekcpe.link</span>
-									</a>
+									</Link>
 									{MOBILE_LINKS.map((link) => (
 										<a
 											key={link.href}
