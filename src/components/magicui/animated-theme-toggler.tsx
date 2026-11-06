@@ -6,14 +6,7 @@ import { flushSync } from "react-dom"
 
 import { cn } from "@/lib/utils"
 
-export type TransitionVariant =
-	| "circle"
-	| "square"
-	| "triangle"
-	| "diamond"
-	| "hexagon"
-	| "rectangle"
-	| "star"
+export type TransitionVariant = "circle" | "square" | "triangle" | "diamond" | "hexagon" | "rectangle" | "star"
 
 interface AnimatedThemeTogglerProps extends React.ComponentPropsWithoutRef<"button"> {
 	duration?: number
@@ -70,11 +63,9 @@ function getThemeTransitionClipPaths(
 		case "triangle": {
 			const scale = maxRadius * 2.2
 			const dx = (Math.sqrt(3) / 2) * scale
-			const verts = [
-				point(cx, cy - scale),
-				point(cx + dx, cy + 0.5 * scale),
-				point(cx - dx, cy + 0.5 * scale),
-			].join(", ")
+			const verts = [point(cx, cy - scale), point(cx + dx, cy + 0.5 * scale), point(cx - dx, cy + 0.5 * scale)].join(
+				", "
+			)
 			return [polygonCollapsed(point(cx, cy), 3), `polygon(${verts})`]
 		}
 		case "diamond": {
@@ -113,9 +104,7 @@ function getThemeTransitionClipPaths(
 					const outerA = -Math.PI / 2 + (i * 2 * Math.PI) / 5
 					verts.push(point(cx + radius * Math.cos(outerA), cy + radius * Math.sin(outerA)))
 					const innerA = outerA + Math.PI / 5
-					verts.push(
-						point(cx + radius * innerRatio * Math.cos(innerA), cy + radius * innerRatio * Math.sin(innerA))
-					)
+					verts.push(point(cx + radius * innerRatio * Math.cos(innerA), cy + radius * innerRatio * Math.sin(innerA)))
 				}
 				return `polygon(${verts.join(", ")})`
 			}
@@ -180,8 +169,7 @@ export const AnimatedThemeToggler = ({
 
 	const toggleTheme = useCallback(() => {
 		const button = buttonRef.current
-		if (!button || isTransitioningRef.current || document.documentElement.dataset.magicuiThemeVt === "active")
-			return
+		if (!button || isTransitioningRef.current || document.documentElement.dataset.magicuiThemeVt === "active") return
 
 		// innerWidth/innerHeight (not visualViewport): percentages must resolve
 		// against the snapshot reference box, which includes classic scrollbars.

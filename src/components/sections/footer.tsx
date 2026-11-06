@@ -33,12 +33,8 @@ export default function FooterSection({ className }: { className?: string }) {
 						dekcpe.link
 					</p>
 					{FOOTER_COLUMNS.map((column, i) => (
-						<div
-							key={column.title}
-							className={cn("flex flex-col gap-3 md:col-span-3", i === 0 && "md:col-start-7")}>
-							<h2 className="font-sans text-sm font-medium tracking-normal text-muted-foreground">
-								{column.title}
-							</h2>
+						<div key={column.title} className={cn("flex flex-col gap-3 md:col-span-3", i === 0 && "md:col-start-7")}>
+							<h2 className="font-sans text-sm font-medium tracking-normal text-muted-foreground">{column.title}</h2>
 							<ul className="flex flex-col gap-2">
 								{column.links.map((link) => (
 									<li key={link.href}>

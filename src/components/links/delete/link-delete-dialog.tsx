@@ -43,9 +43,7 @@ export default function LinkDeleteDialog({ slug, children }: LinkDeleteDialogPro
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Delete /{slug}?</DialogTitle>
-					<DialogDescription>
-						The short link will stop working right away. This can&apos;t be undone.
-					</DialogDescription>
+					<DialogDescription>The short link will stop working right away. This can&apos;t be undone.</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
 					<DialogClose asChild>

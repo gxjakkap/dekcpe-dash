@@ -142,16 +142,7 @@
 }
 
 /* Unlayered so it holds over shadcn's outline-none; never animated */
-:where(
-		a,
-		button,
-		input,
-		select,
-		textarea,
-		summary,
-		[tabindex],
-		[role]
-	):focus-visible {
+:where(a, button, input, select, textarea, summary, [tabindex], [role]):focus-visible {
 	outline: 2px solid var(--color-focus);
 	outline-offset: 2px;
 }

@@ -103,13 +103,9 @@ export function DataTableFacetedFilter<TData, TValue>({
 											)}>
 											<Check className="size-4" aria-hidden="true" />
 										</div>
-										{option.icon && (
-											<option.icon className="text-muted-foreground mr-2 size-4" aria-hidden="true" />
-										)}
+										{option.icon && <option.icon className="text-muted-foreground mr-2 size-4" aria-hidden="true" />}
 										<span>{option.label}</span>
-										{option.count != null && option.count >= 0 && (
-											<Badge variant="default">{option.count}</Badge>
-										)}
+										{option.count != null && option.count >= 0 && <Badge variant="default">{option.count}</Badge>}
 									</CommandItem>
 								)
 							})}

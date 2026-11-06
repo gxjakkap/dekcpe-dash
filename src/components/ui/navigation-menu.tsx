@@ -5,11 +5,7 @@ import type * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function NavigationMenu({
-	className,
-	children,
-	...props
-}: React.ComponentProps<typeof NavigationMenuPrimitive.Root>) {
+function NavigationMenu({ className, children, ...props }: React.ComponentProps<typeof NavigationMenuPrimitive.Root>) {
 	return (
 		<NavigationMenuPrimitive.Root
 			data-slot="navigation-menu"
@@ -21,10 +17,7 @@ function NavigationMenu({
 	)
 }
 
-function NavigationMenuList({
-	className,
-	...props
-}: React.ComponentProps<typeof NavigationMenuPrimitive.List>) {
+function NavigationMenuList({ className, ...props }: React.ComponentProps<typeof NavigationMenuPrimitive.List>) {
 	return (
 		<NavigationMenuPrimitive.List
 			data-slot="navigation-menu-list"
@@ -59,10 +52,7 @@ function NavigationMenuTrigger({
 	)
 }
 
-function NavigationMenuContent({
-	className,
-	...props
-}: React.ComponentProps<typeof NavigationMenuPrimitive.Content>) {
+function NavigationMenuContent({ className, ...props }: React.ComponentProps<typeof NavigationMenuPrimitive.Content>) {
 	return (
 		<NavigationMenuPrimitive.Content
 			data-slot="navigation-menu-content"
@@ -113,13 +103,13 @@ function NavigationMenuIndicator({
 }
 
 export {
-	navigationMenuTriggerStyle,
 	NavigationMenu,
-	NavigationMenuList,
-	NavigationMenuItem,
 	NavigationMenuContent,
-	NavigationMenuTrigger,
-	NavigationMenuLink,
 	NavigationMenuIndicator,
+	NavigationMenuItem,
+	NavigationMenuLink,
+	NavigationMenuList,
+	NavigationMenuTrigger,
 	NavigationMenuViewport,
+	navigationMenuTriggerStyle,
 }

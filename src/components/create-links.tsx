@@ -136,12 +136,7 @@ export default function CreateLinkForm() {
 							<FormItem>
 								<FormLabel className="text-lg">Destination URL</FormLabel>
 								<FormControl>
-									<Input
-										inputMode="url"
-										placeholder="https://cpe.kmutt.ac.th/"
-										{...field}
-										className="w-full"
-									/>
+									<Input inputMode="url" placeholder="https://cpe.kmutt.ac.th/" {...field} className="w-full" />
 								</FormControl>
 								<FormMessage />
 							</FormItem>

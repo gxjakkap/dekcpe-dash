@@ -162,10 +162,7 @@ function DropdownMenuLabel({
 	)
 }
 
-function DropdownMenuSeparator({
-	className,
-	...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
+function DropdownMenuSeparator({ className, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
 	return (
 		<DropdownMenuPrimitive.Separator
 			data-slot="dropdown-menu-separator"
@@ -176,29 +173,23 @@ function DropdownMenuSeparator({
 }
 
 function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
-	return (
-		<span
-			data-slot="dropdown-menu-shortcut"
-			className={cn("ml-auto text-xs opacity-60", className)}
-			{...props}
-		/>
-	)
+	return <span data-slot="dropdown-menu-shortcut" className={cn("ml-auto text-xs opacity-60", className)} {...props} />
 }
 
 export {
 	DropdownMenu,
-	DropdownMenuTrigger,
-	DropdownMenuContent,
-	DropdownMenuItem,
 	DropdownMenuCheckboxItem,
-	DropdownMenuRadioItem,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
 	DropdownMenuLabel,
+	DropdownMenuPortal,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
 	DropdownMenuShortcut,
-	DropdownMenuGroup,
-	DropdownMenuPortal,
 	DropdownMenuSub,
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
-	DropdownMenuRadioGroup,
+	DropdownMenuTrigger,
 }

@@ -13,9 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "./ui/input"
 
 const formSchema = z.object({
-	code: z
-		.string({ message: "Enter your invite code." })
-		.min(3, { message: "Invite codes are at least 3 characters." }),
+	code: z.string({ message: "Enter your invite code." }).min(3, { message: "Invite codes are at least 3 characters." }),
 })
 
 export function RedeemForm() {
@@ -33,7 +31,7 @@ export function RedeemForm() {
 			try {
 				const [res, error] = await redeemInviteCode({ code: val.code })
 
-				if (!res || !!error) {
+				if (!res || error) {
 					toast.error(error?.message ?? "Couldn't redeem the code. Try again.")
 					return
 				}
