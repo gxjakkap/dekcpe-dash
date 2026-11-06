@@ -35,15 +35,19 @@ void main() {
 	gl_FragColor = vec4(mix(uShade, uLight, g), 1.0);
 }`
 
-/** Resolve a colour token (any CSS colour syntax) to 0..1 RGB */
+/**
+ * Resolve a colour token (any CSS colour syntax) to 0..1 RGB. CSS does the conversion and we parse the
+ * computed string: reading pixels back from a canvas is noised by anti-fingerprinting (Firefox resistFingerprinting)
+ */
 function tokenRgb(name: string): [number, number, number] {
-	const probe = document.createElement("canvas").getContext("2d")
-	const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
-	if (!probe || !value) return [1, 1, 1]
-	probe.fillStyle = value
-	probe.fillRect(0, 0, 1, 1)
-	const [r, g, b] = probe.getImageData(0, 0, 1, 1).data
-	return [r / 255, g / 255, b / 255]
+	const probe = document.createElement("i")
+	probe.style.color = `color-mix(in srgb, var(${name}), var(${name}))`
+	document.body.append(probe)
+	const value = getComputedStyle(probe).color
+	probe.remove()
+	const [r = 1, g = 1, b = 1] = value.match(/[\d.]+/g)?.map(Number) ?? []
+	// "color(srgb 0.1 0.2 0.3)" is already 0..1; legacy "rgb(26, 51, 77)" is 0..255
+	return value.startsWith("rgb") ? [r / 255, g / 255, b / 255] : [r, g, b]
 }
 
 export function RefractLight({ className, children }: { className?: string; children?: ReactNode }) {
