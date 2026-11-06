@@ -1,68 +1,56 @@
 import { count, eq } from "drizzle-orm"
-import { headers } from "next/headers"
-import { notFound, redirect } from "next/navigation"
-import LinkActions from "@/components/links/link-actions"
-import LinkInfo from "@/components/links/link-info"
-import LinkQuickStats from "@/components/links/link-quick-stats"
+import { notFound } from "next/navigation"
+import { DashboardPage } from "@/components/dashboard-page"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { db } from "@/db"
-import { clicks, links } from "@/db/schema"
-import { auth } from "@/lib/auth"
+import { getOwnedLink } from "@/db/links"
+import { clicks } from "@/db/schema"
+import { shortLinkUrl } from "@/lib/links"
+import { requireUser } from "@/lib/session"
 import { formatDate, stripProtocol } from "@/lib/utils"
+import LinkActions from "./link-actions"
+import LinkInfo from "./link-info"
 
 type Props = { params: Promise<{ slug: string }> }
 
 export default async function LinkPage({ params }: Props) {
-	const slug = (await params).slug
+	const { slug } = await params
+	const session = await requireUser()
 
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	})
+	const link = await getOwnedLink(slug, session.user.id)
+	if (!link) notFound()
 
-	if (!session) redirect("/sign-in")
-
-	const [linkRes] = await db.select().from(links).where(eq(links.slug, slug)).limit(1)
-
-	if (!linkRes || linkRes.deletedAt || linkRes.owner !== session.user.id) {
-		return notFound()
-	}
-
-	const [stats] = await db
-		.select({
-			clickCount: count(clicks.id).as("clickCount"),
-		})
-		.from(links)
-		.leftJoin(clicks, eq(links.id, clicks.linkId))
-		.where(eq(links.id, linkRes.id))
+	const [stats] = await db.select({ clickCount: count() }).from(clicks).where(eq(clicks.linkId, link.id))
+	const shortlink = shortLinkUrl(link.slug)
 
 	return (
-		<div className="min-h-screen bg-background">
-			<div className="container mx-auto px-4 py-8 max-w-6xl">
-				<div className="mb-8 min-w-0">
-					<h1 className="font-mono text-3xl md:text-4xl font-semibold tracking-tight text-brand break-all max-w-none">
-						{stripProtocol(
-							new URL(linkRes.slug, process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/").toString()
-						)}
-					</h1>
-					<p className="mt-2 text-base md:text-lg text-muted-foreground truncate">→ {linkRes.url}</p>
+		<DashboardPage
+			className="max-w-6xl"
+			title={<span className="font-mono font-semibold text-brand break-all">{stripProtocol(shortlink)}</span>}
+			description={<span className="block truncate">→ {link.url}</span>}>
+			<div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+				<div className="xl:col-span-3">
+					<LinkInfo
+						shortlink={shortlink}
+						dest={link.url}
+						dateCreated={formatDate(link.createdAt)}
+						dateModified={formatDate(link.updatedAt)}
+					/>
 				</div>
 
-				<div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-					<div className="xl:col-span-3">
-						<LinkInfo
-							slug={linkRes.slug}
-							dest={linkRes.url}
-							dateCreated={formatDate(linkRes.createdAt)}
-							dateModified={formatDate(linkRes.updatedAt)}
-							className="h-fit"
-						/>
-					</div>
-
-					<div className="xl:col-span-1">
-						<LinkActions slug={linkRes.slug} dest={linkRes.url} />
-						<LinkQuickStats totalClicks={stats.clickCount} />
-					</div>
+				<div className="xl:col-span-1">
+					<LinkActions slug={link.slug} dest={link.url} />
+					<Card className="mt-6">
+						<CardHeader>
+							<CardTitle className="text-lg">Quick Stats</CardTitle>
+						</CardHeader>
+						<CardContent className="flex justify-between items-center">
+							<span className="text-sm text-muted-foreground">Total Clicks</span>
+							<span className="font-semibold">{stats.clickCount}</span>
+						</CardContent>
+					</Card>
 				</div>
 			</div>
-		</div>
+		</DashboardPage>
 	)
 }

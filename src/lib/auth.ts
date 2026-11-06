@@ -6,13 +6,12 @@ import { admin } from "better-auth/plugins"
 
 import { db } from "@/db"
 import { account, session, user, verification } from "@/db/schema"
-import { ROLES } from "./const"
+import { ROLES } from "@/lib/const"
 
 console.log("Using AUTH_URL:", process.env.AUTH_URL)
 
 export const auth = betterAuth({
 	baseURL: process.env.AUTH_URL ?? "https://dash.dekcpe.link/",
-	secret: process.env.AUTH_SECRET ?? "supersecretkey",
 	database: drizzleAdapter(db, {
 		provider: "pg",
 		schema: {

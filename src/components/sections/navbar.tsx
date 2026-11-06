@@ -1,69 +1,25 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { cn } from "@/lib/utils"
-import { Button } from "../ui/button"
-import { Navbar as NavbarComponent, NavbarLeft, NavbarRight } from "../ui/navbar"
-import Navigation from "../ui/navigation"
+import { Button } from "@/components/ui/button"
 
-interface NavbarActionProps {
-	text: string
-	href: string
-	variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
-	icon?: ReactNode
-	iconRight?: ReactNode
-	isButton?: boolean
-}
-
-interface NavbarProps {
-	showNavigation?: boolean
-	customNavigation?: ReactNode
-	customActionComponent?: ReactNode
-	className?: string
-}
-
-// const HOME_URL = `https://dash.dekcpe.link/`
-// const DASH_URL = new URL("/d", "https://dash.dekcpe.link/").toString()
-
-const ACTIONS: NavbarActionProps[] = [{ text: "Sign In", href: "/d", isButton: true, variant: "outline" }]
-
-export default function Navbar({
-	customActionComponent = null,
-	showNavigation = true,
-	customNavigation,
-	className,
-}: NavbarProps) {
+export default function Navbar({ action }: { action?: ReactNode }) {
 	return (
-		<header className={cn("relative z-50 w-full", className)}>
+		<header className="relative z-50 w-full">
 			<div className="max-w-container mx-auto px-4 md:px-16">
-				<NavbarComponent className="h-18 py-0">
-					<NavbarLeft>
-						<Link href={"/d"} className="font-display text-xl font-medium tracking-[var(--tracking-display)]">
-							dekcpe.link
-						</Link>
-						{showNavigation && (customNavigation || <Navigation />)}
-					</NavbarLeft>
-					<NavbarRight>
+				<nav className="flex h-18 items-center justify-between">
+					<Link href="/d" className="font-display text-xl font-medium tracking-[var(--tracking-display)]">
+						dekcpe.link
+					</Link>
+					<div className="flex items-center justify-end gap-4">
 						<ThemeToggle />
-						{!customActionComponent &&
-							ACTIONS.map((action) =>
-								action.isButton ? (
-									<Button key={action.href} variant={action.variant || "default"} asChild>
-										<a href={action.href}>
-											{action.icon}
-											{action.text}
-											{action.iconRight}
-										</a>
-									</Button>
-								) : (
-									<a key={action.href} href={action.href} className="hidden md:block">
-										{action.text}
-									</a>
-								)
-							)}
-						{!!customActionComponent && <div className="flex items-center ml-2">{customActionComponent}</div>}
-					</NavbarRight>
-				</NavbarComponent>
+						{action ?? (
+							<Button variant="outline" asChild>
+								<Link href="/d">Sign In</Link>
+							</Button>
+						)}
+					</div>
+				</nav>
 			</div>
 		</header>
 	)

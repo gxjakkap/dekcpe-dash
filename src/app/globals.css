@@ -3,10 +3,8 @@
  * axes: light/grotesk-sans/cool · posture: restrained · modes: light+dark · contrast: pass · fold: pass · v2.0.0 */
 /* Hallmark · pre-emit critique: P4 H5 E4 S3 R5 V4 · weakest: S, the page carries only the owner's one claim; the hero sample shows the product's own nouns (destination, short link, QR) instead of new copy */
 /* Hallmark · waive 44c · Ledge posture, the lit field stacked above the head · on this Ledge the short-link sample lies in the water above the headline, so its centre is never level with the text */
-/* Hallmark · dismissed F18 · navbar-left is shadcn's own data-slot naming on the nav, not a picture slot */
 /* Hallmark · dismissed 77 · a redesign adds no sections: the owner's landing is one screen and the footer, and sign-in is one screen */
 @import "tailwindcss";
-@import "../styles/utils.css";
 @import "./tokens.css";
 @import "./base.css" layer(base);
 
@@ -90,7 +88,6 @@
 	--shadow-lg: var(--shadow-card);
 	--shadow-xl: var(--shadow-card);
 	--shadow-2xl: var(--shadow-cast);
-	--shadow-mockup: var(--shadow-cast);
 }
 
 :root {

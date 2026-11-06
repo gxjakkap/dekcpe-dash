@@ -1,73 +1,36 @@
 "use server"
 
-import dayjs from "dayjs"
-import { eq } from "drizzle-orm"
+import { count, eq } from "drizzle-orm"
 import z from "zod"
 import { db } from "@/db"
 import { invite, inviteUsage, user } from "@/db/schema"
 import { ROLES } from "@/lib/const"
+import { CustomError } from "@/lib/errors"
+import { redeemCodeSchema, UNLIMITED_USES } from "@/lib/invites"
 import { authedProcedure } from "@/lib/server-actions"
-import { RedeemInviteCodeStatus } from "./types"
+import { accessOf } from "@/lib/session"
 
 export const redeemInviteCode = authedProcedure
 	.createServerAction()
-	.input(
-		z.object({
-			code: z
-				.string({ message: "Invite code must be a string" })
-				.min(3, { message: "Invite codes are at least 3 characters." }),
-		})
-	)
-	.handler(async ({ input, ctx }) => {
-		const { code } = input
-		const { session } = ctx
-
-		const [res] = await db.select().from(invite).where(eq(invite.code, code)).limit(1)
-
-		if (!res) {
-			return {
-				status: RedeemInviteCodeStatus.INVALID,
-				code: code,
-			}
+	.input(z.object({ code: redeemCodeSchema }))
+	.handler(async ({ input: { code }, ctx: { session } }) => {
+		const [inv] = await db.select().from(invite).where(eq(invite.code, code)).limit(1)
+		if (!inv) {
+			throw new CustomError("InviteCodeInvalidError", `${code} isn't a valid invite code. Check it and try again.`)
+		}
+		if (inv.expirationDate && inv.expirationDate < new Date()) {
+			throw new CustomError("InviteCodeExpiredError", `${code} has expired.`)
 		}
 
-		const exp = dayjs(res.expirationDate)
-		const now = dayjs()
-
-		if (res.expirationDate && exp.isBefore(now)) {
-			return {
-				status: RedeemInviteCodeStatus.EXPIRED,
-				code: code,
-			}
+		const [{ uses }] = await db.select({ uses: count() }).from(inviteUsage).where(eq(inviteUsage.inviteId, inv.id))
+		if (inv.maxUses !== UNLIMITED_USES && uses >= inv.maxUses) {
+			throw new CustomError("InviteCodeUsedUpError", `${code} has been used the maximum number of times.`)
 		}
 
-		const usesRes = await db.select().from(inviteUsage).where(eq(inviteUsage.inviteId, res.id))
+		if (accessOf(session.user) !== "no-access") return { alreadyHadAccess: true }
 
-		if (res.maxUses !== -1 && usesRes.length >= res.maxUses) {
-			return {
-				status: RedeemInviteCodeStatus.MAX_USED,
-				code: code,
-			}
-		}
+		await db.update(user).set({ role: ROLES.USER }).where(eq(user.id, session.user.id))
+		await db.insert(inviteUsage).values({ inviteId: inv.id, userId: session.user.id })
 
-		const [uRes] = await db
-			.select({ id: user.id, role: user.role })
-			.from(user)
-			.where(eq(user.id, session.user.id))
-			.limit(1)
-
-		if (uRes.role !== ROLES.UNAUTHORIZED) {
-			return {
-				status: RedeemInviteCodeStatus.UNNECESSARY,
-				code: code,
-			}
-		}
-
-		await db.update(user).set({ role: ROLES.USER }).where(eq(user.id, uRes.id))
-		await db.insert(inviteUsage).values({ inviteId: res.id, userId: session.user.id })
-
-		return {
-			status: RedeemInviteCodeStatus.OK,
-			code: code,
-		}
+		return { alreadyHadAccess: false }
 	})

@@ -15,7 +15,6 @@ jobs:
     env:
       AUTH_SECRET: ${{ vars.AUTH_SECRET }}
       AUTH_URL: ${{ vars.AUTH_URL }}
-      NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
       NEXT_PUBLIC_SHORTLINK_BASE_URL: ${{ vars.NEXT_PUBLIC_SHORTLINK_BASE_URL }}
     permissions:
       contents: read
@@ -49,7 +48,6 @@ jobs:
             CI=true
             AUTH_SECRET=${{ env.AUTH_SECRET }}
             AUTH_URL=${{ env.AUTH_URL }}
-            NEXT_PUBLIC_BASE_URL=${{ env.NEXT_PUBLIC_BASE_URL }}
             NEXT_PUBLIC_SHORTLINK_BASE_URL=${{ env.NEXT_PUBLIC_SHORTLINK_BASE_URL }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
