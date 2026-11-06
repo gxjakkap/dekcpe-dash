@@ -1,8 +1,7 @@
 "use client"
 
-import type { FormEvent } from "react"
+import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import z from "zod"
 import { useServerAction } from "zsa-react"
 import { deleteShortLink } from "@/app/d/link/[slug]/actions"
 import { Button } from "@/components/ui/button"
@@ -22,46 +21,41 @@ interface LinkDeleteDialogProps {
 	children: React.ReactNode
 }
 
-const requestSchema = z.object({
-	slug: z.string(),
-})
-
 export default function LinkDeleteDialog({ slug, children }: LinkDeleteDialogProps) {
-	const { execute } = useServerAction(deleteShortLink)
+	const { execute, isPending } = useServerAction(deleteShortLink)
+	const router = useRouter()
 
-	const submitHandle = async (e: FormEvent) => {
-		e.preventDefault()
-		console.log(`form submitted`)
-
-		const request = requestSchema.parse({
-			slug: slug,
-		})
-		const [_data, err] = await execute(request)
+	const onDelete = async () => {
+		const [, err] = await execute({ slug })
 
 		if (err) {
-			toast(`${err.message} (${err.code})`)
+			toast.error(err.message)
 			return
 		}
 
-		location.href = "/d/links"
+		toast.success(`Deleted /${slug}`)
+		router.push("/d/links")
 	}
+
 	return (
 		<Dialog>
 			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Delete {`/${slug}`}</DialogTitle>
-					<DialogDescription className="text-sm text-muted-foreground">
-						Are you sure you want to delete this link? This action cannot be undone.
+					<DialogTitle>Delete /{slug}?</DialogTitle>
+					<DialogDescription>
+						The short link will stop working right away. This can&apos;t be undone.
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
 					<DialogClose asChild>
-						<Button variant="outline">Cancel</Button>
+						<Button variant="outline" disabled={isPending}>
+							Cancel
+						</Button>
 					</DialogClose>
-					<form onSubmit={(e: FormEvent) => submitHandle(e)}>
-						<Button variant="destructive">Confirm</Button>
-					</form>
+					<Button variant="destructive" onClick={onDelete} disabled={isPending}>
+						{isPending ? "Deleting…" : "Delete Link"}
+					</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

@@ -2,8 +2,11 @@
 
 import type { ColumnDef } from "@tanstack/react-table"
 import { Copy, ExternalLink } from "lucide-react"
+import Link from "next/link"
+import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { formatDate, stripProtocol } from "@/lib/utils"
 import type { InitialStateTablePage } from "@/types"
 import { DataTable } from "./tablecomponents"
 
@@ -35,27 +38,30 @@ export function LinksTable(props: LinksTableProps) {
 			accessorKey: "slug",
 			header: "Short Link",
 			cell: ({ row }) => {
-				const shortUrl = new URL(
-					row.getValue("slug"),
-					process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/"
+				const shortUrl = stripProtocol(
+					new URL(
+						row.getValue("slug"),
+						process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/"
+					).toString()
 				)
-					.toString()
-					.replace("https://", "")
-					.replace("http://", "")
 				return (
 					<div className="flex items-center gap-2 w-full">
-						<code className="bg-muted px-2 py-1 rounded text-sm font-mono truncate flex-1 whitespace-nowrap">
+						<Link
+							href={`/d/link/${row.getValue("slug")}`}
+							onClick={(e) => e.stopPropagation()}
+							className="bg-muted text-brand px-2 py-1 rounded text-sm font-mono truncate flex-1 whitespace-nowrap hover:underline">
 							{shortUrl}
-						</code>
+						</Link>
 						<Button
 							variant="ghost"
-							size="sm"
-							className="h-6 w-6 p-0"
+							size="icon"
+							aria-label="Copy short link"
 							onClick={(e) => {
 								e.stopPropagation()
 								navigator.clipboard.writeText(`https://${shortUrl}`)
+								toast.success(`Copied ${shortUrl}`)
 							}}>
-							<Copy className="h-3 w-3" />
+							<Copy className="h-4 w-4" />
 						</Button>
 					</div>
 				)
@@ -80,7 +86,7 @@ export function LinksTable(props: LinksTableProps) {
 			cell: ({ row }) => {
 				const clicks = row.getValue("clickCount") as number
 				return (
-					<Badge variant={clicks > 0 ? "default" : "secondary"} className="font-mono">
+					<Badge variant="secondary" className="font-mono">
 						{clicks.toLocaleString()}
 					</Badge>
 				)
@@ -91,7 +97,7 @@ export function LinksTable(props: LinksTableProps) {
 			header: "Created",
 			cell: ({ row }) => {
 				const date = row.getValue("createdAt") as Date
-				return <div className="text-sm text-muted-foreground">{date.toLocaleDateString()}</div>
+				return <div className="text-sm text-muted-foreground">{formatDate(date)}</div>
 			},
 		},
 	]
@@ -108,6 +114,14 @@ export function LinksTable(props: LinksTableProps) {
 				) ?? undefined
 			}
 			isLoading={false}
+			emptyState={
+				<div className="flex flex-col items-center gap-3 font-normal">
+					<p>No links yet.</p>
+					<Button size="sm" asChild>
+						<Link href="/d/links/create">Create Your First Link</Link>
+					</Button>
+				</div>
+			}
 			className="w-full"
 		/>
 	)

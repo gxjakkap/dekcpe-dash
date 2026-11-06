@@ -14,7 +14,8 @@ export const AuroraText = memo(
 	({
 		children,
 		className = "",
-		colors = ["#FF0080", "#7928CA", "#0070F3", "#38bdf8"],
+		// each stop keeps >= 3:1 against both the light and dark background (large text)
+		colors = ["#FF0080", "#8B5CF6", "#0070F3", "#0891B2"],
 		speed = 1,
 	}: AuroraTextProps) => {
 		const gradientStyle = {

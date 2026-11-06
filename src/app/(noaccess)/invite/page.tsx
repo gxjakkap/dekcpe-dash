@@ -6,14 +6,12 @@ export const metadata: Metadata = {
 	title: "redeem invite | dekcpe.link",
 }
 
-export default async function InvitePage() {
+export default function InvitePage() {
 	return (
-		<div className="flex flex-col w-screen min-h-screen">
-			<div className="relative flex h-[500px] min-h-screen w-full items-center justify-center overflow-hidden rounded-lg border bg-background p-20 md:shadow-xl">
-				<div className="flex flex-col gap-y-3 py-auto z-50">
-					<h1 className={`text-4xl text-center`}>Enter Invite Code.</h1>
-					<RedeemForm />
-				</div>
+		<div className="flex flex-1 items-center justify-center px-4 py-16">
+			<div className="flex w-full max-w-sm flex-col gap-6">
+				<h1 className="text-3xl font-bold tracking-tight text-center">Redeem an Invite Code</h1>
+				<RedeemForm />
 			</div>
 		</div>
 	)

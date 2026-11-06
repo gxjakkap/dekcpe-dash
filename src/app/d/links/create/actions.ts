@@ -20,14 +20,13 @@ export const createShortLink = authorizedProcedure
 				.or(
 					z
 						.string()
-						.min(4, { message: "Custom Slug must be longer than 4 characters" })
-						.regex(
-							/^[a-zA-Z0-9_-]+$/,
-							"Slug must only contain alphanumerica characters, hyphens and underscore."
-						)
+						.min(4, { message: "Slug must be at least 4 characters." })
+						.regex(/^[a-zA-Z0-9_-]+$/, "Slug can only contain letters, numbers, hyphens, and underscores.")
 				)
 				.optional(),
-			url: z.string().regex(/^https?:\/\/[^\s<>"]+$/, "Destination URL must be valid."),
+			url: z
+				.string()
+				.regex(/^https?:\/\/[^\s<>"]+$/, "Enter a full URL that starts with http:// or https://"),
 		})
 	)
 	.handler(async ({ input, ctx }) => {
@@ -35,7 +34,8 @@ export const createShortLink = authorizedProcedure
 		let sl = slug
 		if (sl && sl.length > 0) {
 			const [l] = await db.select().from(links).where(eq(links.slug, sl)).limit(1)
-			if (l) throw new CustomError("SlugAlreadyExistedError", "This slug already existed!")
+			if (l)
+				throw new CustomError("SlugAlreadyExistedError", "That slug is already taken. Try a different one.")
 		} else {
 			const buf = Crypto.randomBytes(Math.floor((RANDOM_SLUG_LENGTH * 3) / 4))
 			sl = buf.toString("base64url")

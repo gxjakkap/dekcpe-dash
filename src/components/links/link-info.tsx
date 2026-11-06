@@ -30,17 +30,20 @@ export default function LinkInfo({
 					<div className="space-y-2">
 						<div className="text-sm font-medium text-muted-foreground">Link</div>
 						<div className="flex items-center gap-2">
-							<div className="font-mono text-sm bg-muted p-2 rounded flex-1 truncate">{shortlink}</div>
+							<div className="font-mono text-sm bg-muted text-brand p-2 rounded flex-1 truncate">
+								{shortlink}
+							</div>
 							<Button
 								variant="ghost"
-								size="sm"
-								className="h-4 w-4 text-muted-foreground"
+								size="icon"
+								className="text-muted-foreground"
+								aria-label="Copy short link"
 								onClick={(e) => {
 									e.stopPropagation()
 									navigator.clipboard.writeText(shortlink)
-									toast(`Link ${shortlink} copied to clipboard!`)
+									toast.success(`Copied ${shortlink}`)
 								}}>
-								<Copy className="h-3 w-3" />
+								<Copy className="h-4 w-4" />
 							</Button>
 						</div>
 					</div>
@@ -48,21 +51,12 @@ export default function LinkInfo({
 						<div className="text-sm font-medium text-muted-foreground">Destination</div>
 						<div className="flex items-center gap-2">
 							<div className="font-mono text-sm bg-muted p-2 rounded flex-1 truncate">{dest}</div>
-							{/* <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-4 w-4 text-muted-foreground"
-                        onClick={() => {
-                            location.href = dest
-                        }}
-                    >
-                        <ExternalLink className="h-3 w-3" />
-                    </Button> */}
 							<a
 								href={dest}
 								target="_blank"
-								rel="noopener, noreferer"
-								className="hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 rounded-xl p-1">
+								rel="noopener noreferrer"
+								aria-label="Open destination in new tab"
+								className="hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 rounded-md p-2.5">
 								<ExternalLink className="h-4 w-4 text-muted-foreground" />
 							</a>
 						</div>
@@ -72,14 +66,14 @@ export default function LinkInfo({
 							<Calendar className="h-4 w-4" />
 							Created
 						</div>
-						<div className="text-sm">{new Date(dateCreated).toLocaleDateString()}</div>
+						<div className="text-sm">{dateCreated}</div>
 					</div>
 					<div className="space-y-2">
 						<div className="text-sm font-medium text-muted-foreground flex items-center gap-1">
 							<Clock className="h-4 w-4" />
 							Modified
 						</div>
-						<div className="text-sm">{new Date(dateModified).toLocaleDateString()}</div>
+						<div className="text-sm">{dateModified}</div>
 					</div>
 				</div>
 			</CardContent>

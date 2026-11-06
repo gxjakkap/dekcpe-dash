@@ -1,20 +1,19 @@
 import Link from "next/link"
 
-import SignOut from "@/components/sign-out"
 import { Button } from "@/components/ui/button"
 
-export default async function NoAccessPage() {
+export default function NoAccessPage() {
 	return (
-		<div className="flex flex-col w-screen min-h-screen">
-			<div className="relative flex h-[500px] min-h-screen w-full items-center justify-center overflow-hidden rounded-lg border bg-background p-20 md:shadow-xl">
-				<div className="flex flex-col gap-y-3 py-auto z-50">
-					<h1 className={`text-4xl text-center`}>No Access ❌</h1>
-					<SignOut />
-					<h2 className={`$text-2xl text-center`}>Have an invite code?</h2>
-					<Link href="/invite" className="mx-auto">
-						<Button className="mx-auto">Redeem an invite code</Button>
-					</Link>
-				</div>
+		<div className="flex flex-1 items-center justify-center px-4 py-16">
+			<div className="flex max-w-md flex-col items-center gap-4 text-center">
+				<h1 className="text-3xl font-bold tracking-tight">You Don&apos;t Have Access Yet</h1>
+				<p className="text-muted-foreground">
+					dekcpe.link is for CPE students and staff. If someone gave you an invite code, redeem it to get
+					access.
+				</p>
+				<Button asChild>
+					<Link href="/invite">Redeem an Invite Code</Link>
+				</Button>
 			</div>
 		</div>
 	)

@@ -40,7 +40,7 @@ export default async function AdminLinksPage() {
 							<div className="flex items-center gap-3 mb-2">
 								<h1 className="text-3xl md:text-4xl font-bold tracking-tight">All Links</h1>
 							</div>
-							<p className="text-base md:text-xl text-muted-foreground">Manage all user's links</p>
+							<p className="text-base md:text-xl text-muted-foreground">Every link, from every user</p>
 						</div>
 					</div>
 
@@ -48,8 +48,8 @@ export default async function AdminLinksPage() {
 						<Card>
 							<CardContent className="p-4">
 								<div className="flex items-center gap-3">
-									<div className="p-2 bg-primary/10 rounded-lg">
-										<LinkIcon className="h-4 w-4 text-primary" />
+									<div className="p-2 bg-muted rounded-lg">
+										<LinkIcon className="h-4 w-4 text-muted-foreground" />
 									</div>
 									<div>
 										<p className="text-sm text-muted-foreground">Total Links</p>

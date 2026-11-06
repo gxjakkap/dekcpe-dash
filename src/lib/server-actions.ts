@@ -16,7 +16,8 @@ export function shapeErrors({ err }: any) {
 	if (err instanceof PublicError || isDev) {
 		console.error(err)
 		return {
-			code: err.code ?? "ERROR",
+			// CustomError has no code; its name (e.g. SlugAlreadyExistedError) lets the client react to it
+			code: err.code ?? (isAllowedError ? err.name : "ERROR"),
 			message: `${!isAllowedError && isDev ? "[DEV] " : ""}${err.message}`,
 		}
 	} else {

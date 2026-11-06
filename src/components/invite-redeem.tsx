@@ -14,8 +14,8 @@ import { Input } from "./ui/input"
 
 const formSchema = z.object({
 	code: z
-		.string({ message: "Invite code must be a string" })
-		.min(3, { message: "Invite code must be longer that 3 letters" }),
+		.string({ message: "Enter your invite code." })
+		.min(3, { message: "Invite codes are at least 3 characters." }),
 })
 
 export function RedeemForm() {
@@ -34,57 +34,51 @@ export function RedeemForm() {
 				const [res, error] = await redeemInviteCode({ code: val.code })
 
 				if (!res || !!error) {
-					toast(`Error occurred! (${error.message})`)
-					console.log(error)
+					toast.error(error?.message ?? "Couldn't redeem the code. Try again.")
 					return
 				}
 
 				if (res.status === RedeemInviteCodeStatus.MAX_USED) {
-					toast(`Invite code "${res.code}" has reach its max usage limit!`)
+					form.setError("code", { message: `${res.code} has been used the maximum number of times.` })
 				} else if (res.status === RedeemInviteCodeStatus.INVALID) {
-					toast(`Invite code "${res.code}" is invalid!`)
+					form.setError("code", { message: `${res.code} isn't a valid invite code. Check it and try again.` })
 				} else if (res.status === RedeemInviteCodeStatus.UNNECESSARY) {
-					toast(`You already have access to dekcpe.link!`)
-					window.location.href = "/"
+					toast.success("You already have access to dekcpe.link.")
+					window.location.href = "/d"
 				} else if (res.status === RedeemInviteCodeStatus.OK) {
-					toast("Invite code redeemed successfully")
-					window.location.href = "/"
+					toast.success("Invite code redeemed. Welcome to dekcpe.link!")
+					window.location.href = "/d"
 				} else {
-					toast(`Unknown error occurred!`)
+					toast.error("Couldn't redeem the code. Try again.")
 				}
 			} catch (error) {
-				toast(`Unknown error occurred!`)
+				toast.error("Couldn't redeem the code. Try again.")
 				console.error(error)
 			}
 		})
 	}
 
 	return (
-		<>
-			{isPending ? (
-				<LoaderCircle className="w-16 h-16 mx-auto animate-spin" />
-			) : (
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-3">
-						<FormField
-							control={form.control}
-							name="code"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Invite Code</FormLabel>
-									<FormControl>
-										<Input placeholder="Enter it here." {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<Button type="submit" className="mx-auto w-full">
-							Redeem
-						</Button>
-					</form>
-				</Form>
-			)}
-		</>
+		<Form {...form}>
+			<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-3">
+				<FormField
+					control={form.control}
+					name="code"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Invite Code</FormLabel>
+							<FormControl>
+								<Input placeholder="e.g. CPE36-WELCOME" autoComplete="off" {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<Button type="submit" className="mx-auto w-full" disabled={isPending}>
+					{isPending && <LoaderCircle className="animate-spin" />}
+					{isPending ? "Redeeming…" : "Redeem"}
+				</Button>
+			</form>
+		</Form>
 	)
 }

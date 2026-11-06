@@ -13,7 +13,7 @@ import {
 	useReactTable,
 	type VisibilityState,
 } from "@tanstack/react-table"
-import { format } from "date-fns"
+import { format, startOfToday } from "date-fns"
 import { CalendarIcon, ChevronDown, PlusIcon, Trash2 } from "lucide-react"
 import * as React from "react"
 import { useForm } from "react-hook-form"
@@ -42,7 +42,9 @@ import { cn } from "@/lib/utils"
 import { Calendar } from "../ui/calendar"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { Input } from "../ui/input"
+import { Label } from "../ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
+import { Switch } from "../ui/switch"
 
 export interface InviteColumn {
 	id: number
@@ -82,22 +84,18 @@ const addFormSchema = z.object({
 				return val
 			},
 			z.number().refine((val) => val === -1 || (val >= 1 && val <= 9999), {
-				message: "Max uses must be -1 (for unlimited) or a number between 1 and 9999",
+				message: "Max uses must be between 1 and 9999.",
 			})
 		)
 		.optional(),
 	expirationDate: z.date().optional(),
 })
 
-/** type AddFormSchema = {
-	code?: string
-	maxUses?: number
-	expirationDate?: Date
-} **/
-
 const AddDialog = ({ isOpen, onClose, onAdd, isPending }: AddDialogProps) => {
+	const [unlimited, setUnlimited] = React.useState(false)
+
 	const handleSubmit = (val: z.infer<typeof addFormSchema>) => {
-		onAdd(val)
+		onAdd({ ...val, maxUses: unlimited ? -1 : val.maxUses })
 	}
 
 	const addForm = useForm<z.infer<typeof addFormSchema>>({
@@ -122,39 +120,47 @@ const AddDialog = ({ isOpen, onClose, onAdd, isPending }: AddDialogProps) => {
 								name="code"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className="text-right capitalize">Code</FormLabel>
+										<FormLabel>Code</FormLabel>
 										<FormControl>
-											<Input
-												placeholder="Custom invite code (leave blank to autogenerate)"
-												className="mt-1"
-												{...field}
-											/>
+											<Input placeholder="Leave blank to auto-generate" className="mt-1" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
-							<FormField
-								control={addForm.control}
-								name="maxUses"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel className="text-right capitalize">
-											Max Uses (put -1 for unlimited use)
-										</FormLabel>
-										<FormControl>
-											<Input placeholder="Max Usage" className="mt-1" {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+							<div className="flex items-center gap-x-2">
+								<Switch
+									id="invite-unlimited"
+									checked={unlimited}
+									onCheckedChange={(checked) => {
+										setUnlimited(checked)
+										// a hidden, half-typed value would otherwise still fail validation
+										addForm.setValue("maxUses", undefined)
+									}}
+								/>
+								<Label htmlFor="invite-unlimited">Unlimited uses</Label>
+							</div>
+							{!unlimited && (
+								<FormField
+									control={addForm.control}
+									name="maxUses"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Max Uses</FormLabel>
+											<FormControl>
+												<Input inputMode="numeric" placeholder="1" className="mt-1" {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							)}
 							<FormField
 								control={addForm.control}
 								name="expirationDate"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className="text-right capitalize">Expiration Date</FormLabel>
+										<FormLabel>Expiration Date</FormLabel>
 										<Popover>
 											<PopoverTrigger asChild>
 												<FormControl>
@@ -174,7 +180,7 @@ const AddDialog = ({ isOpen, onClose, onAdd, isPending }: AddDialogProps) => {
 													mode="single"
 													selected={field.value}
 													onSelect={field.onChange}
-													disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+													disabled={(date) => date < startOfToday()}
 													initialFocus
 												/>
 											</PopoverContent>
@@ -189,7 +195,7 @@ const AddDialog = ({ isOpen, onClose, onAdd, isPending }: AddDialogProps) => {
 								Cancel
 							</Button>
 							<Button type="submit" disabled={isPending}>
-								{isPending ? "Processing..." : "Submit"}
+								{isPending ? "Creating…" : "Create Invite"}
 							</Button>
 						</DialogFooter>
 					</form>
@@ -212,10 +218,9 @@ const DeleteDialog = ({ isOpen, onClose, onConfirm, code, isPending }: DeleteDia
 		<Dialog open={isOpen} onOpenChange={onClose}>
 			<DialogContent className="sm:max-w-md">
 				<DialogHeader>
-					<DialogTitle>Confirm Deletion</DialogTitle>
+					<DialogTitle>Delete Invite Code {code}?</DialogTitle>
 					<DialogDescription>
-						Are you sure you want to delete invite code <span className="font-bold">{code}</span>? This action
-						cannot be undone.
+						People who haven&apos;t redeemed it yet won&apos;t be able to. This can&apos;t be undone.
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
@@ -223,7 +228,7 @@ const DeleteDialog = ({ isOpen, onClose, onConfirm, code, isPending }: DeleteDia
 						Cancel
 					</Button>
 					<Button type="button" variant="destructive" onClick={onConfirm} disabled={isPending}>
-						{isPending ? "Deleting..." : "Delete"}
+						{isPending ? "Deleting…" : "Delete Invite"}
 					</Button>
 				</DialogFooter>
 			</DialogContent>
@@ -239,14 +244,15 @@ const ActionCell = (row: Row<InviteColumn>) => {
 	const handleDelete = async () => {
 		startTransition(async () => {
 			try {
-				const [_res, _err] = await deleteInviteCode({
+				const [, err] = await deleteInviteCode({
 					code: data.code,
 				})
-				toast("Record deleted succesfully")
+				if (err) throw new Error(err.message)
+				toast.success(`Deleted invite code ${data.code}`)
 				setIsDeleteOpen(false)
 				location.reload()
 			} catch (error) {
-				toast("Failed to delete record")
+				toast.error(error instanceof Error ? error.message : "Couldn't delete this invite code. Try again.")
 				console.error(error)
 			}
 		})
@@ -257,6 +263,7 @@ const ActionCell = (row: Row<InviteColumn>) => {
 			<Button
 				variant="ghost"
 				size="icon"
+				aria-label={`Delete invite ${data.code}`}
 				onClick={() => setIsDeleteOpen(true)}
 				className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
 				disabled={isPending}>
@@ -346,18 +353,15 @@ export function AdminInviteTable({ data }: InviteTableProps) {
 				const [res, err] = await createInviteCode(data)
 
 				if (err) {
-					toast(`Error! ${err.message}`)
+					toast.error(err.message)
+					return
 				}
 
-				if (res?.code) {
-					toast(`Invite code "${res.code}" created!`)
-				} else {
-					toast("Failed to create invite code.")
-				}
+				toast.success(`Created invite code ${res.code}`)
 				setIsAddOpen(false)
 				location.reload()
 			} catch (error) {
-				toast("Failed to create invite code.")
+				toast.error("Couldn't create the invite code. Try again.")
 				console.error(error)
 			}
 		})
@@ -425,7 +429,7 @@ export function AdminInviteTable({ data }: InviteTableProps) {
 						</DropdownMenuContent>
 					</DropdownMenu>
 					<Button onClick={() => setIsAddOpen(true)}>
-						<PlusIcon /> New Code
+						<PlusIcon /> New Invite Code
 					</Button>
 				</div>
 				<div className="rounded-md border">
@@ -468,8 +472,7 @@ export function AdminInviteTable({ data }: InviteTableProps) {
 				</div>
 				<div className="flex items-center justify-end space-x-2 py-4">
 					<div className="flex-1 text-sm text-muted-foreground">
-						{table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length}{" "}
-						row(s) selected.
+						{table.getFilteredRowModel().rows.length} invite codes
 					</div>
 					<div className="space-x-2">
 						<Button

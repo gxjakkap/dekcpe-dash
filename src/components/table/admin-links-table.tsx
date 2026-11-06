@@ -2,7 +2,9 @@
 
 import type { ColumnDef } from "@tanstack/react-table"
 import { Copy, ExternalLink } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import { formatDate, stripProtocol } from "@/lib/utils"
 import type { InitialStateTablePage } from "@/types"
 import { DataTable } from "./tablecomponents"
 
@@ -34,27 +36,27 @@ export function AdminLinksTable(props: AdminLinksTableProps) {
 			accessorKey: "slug",
 			header: "Short Link",
 			cell: ({ row }) => {
-				const shortUrl = new URL(
-					row.getValue("slug"),
-					process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/"
+				const shortUrl = stripProtocol(
+					new URL(
+						row.getValue("slug"),
+						process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/"
+					).toString()
 				)
-					.toString()
-					.replace("https://", "")
-					.replace("http://", "")
 				return (
 					<div className="flex items-center gap-2 w-full">
-						<code className="bg-muted px-2 py-1 rounded text-sm font-mono truncate flex-1 whitespace-nowrap">
+						<code className="bg-muted text-brand px-2 py-1 rounded text-sm font-mono truncate flex-1 whitespace-nowrap">
 							{shortUrl}
 						</code>
 						<Button
 							variant="ghost"
-							size="sm"
-							className="h-6 w-6 p-0"
+							size="icon"
+							aria-label="Copy short link"
 							onClick={(e) => {
 								e.stopPropagation()
 								navigator.clipboard.writeText(`https://${shortUrl}`)
+								toast.success(`Copied ${shortUrl}`)
 							}}>
-							<Copy className="h-3 w-3" />
+							<Copy className="h-4 w-4" />
 						</Button>
 					</div>
 				)
@@ -85,7 +87,7 @@ export function AdminLinksTable(props: AdminLinksTableProps) {
 			header: "Created",
 			cell: ({ row }) => {
 				const date = row.getValue("createdAt") as Date
-				return <div className="text-sm text-muted-foreground">{date.toLocaleDateString()}</div>
+				return <div className="text-sm text-muted-foreground">{formatDate(date)}</div>
 			},
 		},
 	]
@@ -94,14 +96,6 @@ export function AdminLinksTable(props: AdminLinksTableProps) {
 			columns={columns}
 			data={props.data}
 			initialState={props.initialState}
-			rowClickable={true}
-			hrefPrefix="d/a/link/"
-			hrefColumn={
-				columns.find(
-					(c): c is ColumnDef<AdminLinksColumn> & { accessorKey: keyof AdminLinksColumn } =>
-						c.accessorKey === "slug"
-				) ?? undefined
-			}
 			isLoading={false}
 			className="w-full"
 		/>
