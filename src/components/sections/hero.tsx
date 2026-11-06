@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import Github from "@/components/logos/github"
-import { RefractLight } from "@/components/refract-light"
+import { RefractLight, tokenRgb } from "@/components/refract-light"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -52,8 +52,8 @@ const HERO_DATA: HeroData = {
 
 const SAMPLE = {
 	host: "dekcpe.link/",
-	slug: "example",
-	dest: "https://example.com/forms/orientation-signup",
+	slug: "nevergonna",
+	dest: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
 }
 
 function SampleQr() {
@@ -62,7 +62,9 @@ function SampleQr() {
 		let gone = false
 		import("qr-code-styling").then(({ default: QRCodeStyling }) => {
 			if (gone || !ref.current) return
-			const ink = getComputedStyle(document.documentElement).getPropertyValue("--color-ink").trim()
+			const ink = `rgb(${tokenRgb("--color-ink")
+				.map((c) => Math.round(c * 255))
+				.join(" ")})`
 			ref.current.replaceChildren()
 			new QRCodeStyling({
 				type: "svg",
@@ -82,13 +84,9 @@ function SampleQr() {
 	return <div ref={ref} className="size-[152px]" />
 }
 
-/** The dashboard's link page, built at full size until a real capture replaces it */
 function ShortLinkSample() {
 	return (
 		<div
-			data-slot="hero"
-			data-kind="product"
-			data-alt="The dashboard's link page: a short link, its destination and its QR code"
 			role="img"
 			aria-label={`Example short link ${SAMPLE.host}${SAMPLE.slug} with its QR code`}
 			className="w-full max-w-[36rem] rounded-card bg-light/85 p-6 text-ink shadow-[var(--edge-light),var(--shadow-cast)] md:p-8">
