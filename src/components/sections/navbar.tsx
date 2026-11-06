@@ -1,5 +1,6 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
 import { Button } from "../ui/button"
 import { Navbar as NavbarComponent, NavbarLeft, NavbarRight } from "../ui/navbar"
@@ -43,6 +44,7 @@ export default function Navbar({
 						{showNavigation && (customNavigation || <Navigation />)}
 					</NavbarLeft>
 					<NavbarRight>
+						<ThemeToggle />
 						{!customActionComponent &&
 							ACTIONS.map((action) =>
 								action.isButton ? (

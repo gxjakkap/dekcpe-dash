@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import Github from "@/components/logos/github"
-import { RefractLight, tokenRgb } from "@/components/refract-light"
+import { RefractLight } from "@/components/refract-light"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -62,18 +62,16 @@ function SampleQr() {
 		let gone = false
 		import("qr-code-styling").then(({ default: QRCodeStyling }) => {
 			if (gone || !ref.current) return
-			const ink = `rgb(${tokenRgb("--color-ink")
-				.map((c) => Math.round(c * 255))
-				.join(" ")})`
 			ref.current.replaceChildren()
+			// currentColor: the dots follow the wrapper's text-ink through theme changes (and Firefox drops oklch in SVG fills)
 			new QRCodeStyling({
 				type: "svg",
 				width: 152,
 				height: 152,
 				margin: 0,
 				data: `https://${SAMPLE.host}${SAMPLE.slug}`,
-				dotsOptions: { type: "rounded", color: ink },
-				cornersSquareOptions: { type: "extra-rounded", color: ink },
+				dotsOptions: { type: "rounded", color: "currentColor" },
+				cornersSquareOptions: { type: "extra-rounded", color: "currentColor" },
 				backgroundOptions: { color: "transparent" },
 			}).append(ref.current)
 		})
@@ -81,7 +79,7 @@ function SampleQr() {
 			gone = true
 		}
 	}, [])
-	return <div ref={ref} className="size-[152px]" />
+	return <div ref={ref} className="size-[152px] text-ink" />
 }
 
 function ShortLinkSample() {

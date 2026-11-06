@@ -39,7 +39,7 @@ void main() {
  * Resolve a colour token (any CSS colour syntax) to 0..1 RGB. CSS does the conversion and we parse the
  * computed string: reading pixels back from a canvas is noised by anti-fingerprinting (Firefox resistFingerprinting)
  */
-export function tokenRgb(name: string): [number, number, number] {
+function tokenRgb(name: string): [number, number, number] {
 	const probe = document.createElement("i")
 	probe.style.color = `color-mix(in srgb, var(${name}), var(${name}))`
 	document.body.append(probe)

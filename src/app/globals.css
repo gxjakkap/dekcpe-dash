@@ -142,12 +142,35 @@
 }
 
 /* Unlayered so it holds over shadcn's outline-none; never animated */
-:where(a, button, input, select, textarea, summary, [tabindex], [role]):focus-visible {
+:where(
+		a,
+		button,
+		input,
+		select,
+		textarea,
+		summary,
+		[tabindex],
+		[role]
+	):focus-visible {
 	outline: 2px solid var(--color-focus);
 	outline-offset: 2px;
 }
 :where(input, textarea, select):focus-visible {
 	outline-offset: -2px;
+}
+
+/* Theme toggle (magicui animated-theme-toggler): the new theme is revealed by a growing circle */
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation: none;
+	mix-blend-mode: normal;
+}
+html[data-magicui-theme-vt="active"]::view-transition-group(root) {
+	animation-duration: var(--magicui-theme-toggle-vt-duration);
+}
+/* Pin the collapsed clip before the JS animation starts, or Firefox paints one frame of the new theme in full */
+html[data-magicui-theme-vt="active"]::view-transition-new(root) {
+	clip-path: var(--magicui-theme-vt-clip-from);
 }
 
 /* Reduce Motion: jump every animation and transition to its end state */
