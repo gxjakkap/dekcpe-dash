@@ -3,29 +3,23 @@ import { LoaderCircle } from "lucide-react"
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { signIn } from "@/lib/auth-client"
-import { cn } from "@/lib/utils"
 
 export default function SignIn() {
 	const [loading, setLoading] = useState(false)
 
 	return (
-		<Card className="max-w-md">
-			<CardHeader>
-				<CardTitle className="text-lg md:text-xl">Sign In</CardTitle>
-				<CardDescription>
-					Use your KMUTT Microsoft account to access{" "}
-					<span className="font-semibold text-foreground">dekcpe.link</span>.
-				</CardDescription>
-			</CardHeader>
-			<CardContent>
-				<div className="grid gap-4">
-					<div className={cn("w-full gap-2 flex items-center", "justify-between flex-col")}>
+		<div className="flex max-w-md flex-col gap-6">
+			<h1 className="text-display-s leading-[1.02]">Sign In</h1>
+			<p className="text-lead text-muted-foreground">
+				Use your KMUTT Microsoft account to access <span className="text-foreground">dekcpe.link</span>.
+			</p>
+			<div>
 						<Button
-							variant="outline"
-							className={cn("w-full gap-2")}
+							size="lg"
+							className="gap-3"
 							disabled={loading}
+							aria-busy={loading}
 							onClick={async () => {
 								await signIn.social(
 									{
@@ -56,9 +50,7 @@ export default function SignIn() {
 							)}
 							{loading ? "Signing In…" : "Sign In with Microsoft"}
 						</Button>
-					</div>
-				</div>
-			</CardContent>
-		</Card>
+			</div>
+		</div>
 	)
 }
