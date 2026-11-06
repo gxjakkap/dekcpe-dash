@@ -38,7 +38,7 @@ export default async function LinkPage({ params }: Props) {
 		<div className="min-h-screen bg-background">
 			<div className="container mx-auto px-4 py-8 max-w-6xl">
 				<div className="mb-8 min-w-0">
-					<h1 className="font-mono text-3xl md:text-4xl font-semibold tracking-tight text-brand break-all">
+					<h1 className="font-mono text-3xl md:text-4xl font-semibold tracking-tight text-brand break-all max-w-none">
 						{stripProtocol(
 							new URL(
 								linkRes.slug,

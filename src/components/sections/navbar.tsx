@@ -1,11 +1,9 @@
-import { Menu } from "lucide-react"
 import Link from "next/link"
 import type { ReactNode } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "../ui/button"
 import { Navbar as NavbarComponent, NavbarLeft, NavbarRight } from "../ui/navbar"
 import Navigation from "../ui/navigation"
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet"
 
 interface NavbarActionProps {
 	text: string
@@ -25,8 +23,6 @@ interface NavbarProps {
 
 // const HOME_URL = `https://dash.dekcpe.link/`
 // const DASH_URL = new URL("/d", "https://dash.dekcpe.link/").toString()
-
-const MOBILE_LINKS = [{ text: "Dashboard", href: "/d" }]
 
 const ACTIONS: NavbarActionProps[] = [{ text: "Sign In", href: "/d", isButton: true, variant: "outline" }]
 
@@ -64,26 +60,6 @@ export default function Navbar({
 								)
 							)}
 						{!!customActionComponent && <div className="flex items-center ml-2">{customActionComponent}</div>}
-						<Sheet>
-							<SheetTrigger asChild>
-								<Button variant="ghost" size="icon" className="shrink-0 md:hidden">
-									<Menu className="size-5" />
-									<span className="sr-only">Toggle navigation menu</span>
-								</Button>
-							</SheetTrigger>
-							<SheetContent side="right">
-								<nav className="grid gap-6 p-6 text-lg">
-									{MOBILE_LINKS.map((link) => (
-										<a
-											key={link.href}
-											href={link.href}
-											className="text-muted-foreground hover:text-foreground">
-											{link.text}
-										</a>
-									))}
-								</nav>
-							</SheetContent>
-						</Sheet>
 					</NavbarRight>
 				</NavbarComponent>
 			</div>

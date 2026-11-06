@@ -79,8 +79,8 @@ export function DashboardSidebar({ isAdmin, name }: DashboardSidebarProps) {
 		setOpenMobile(false)
 	}, [pathname, setOpenMobile])
 	return (
-		<Sidebar className="pt-8">
-			<SidebarHeader className="flex items-center justify-between">
+		<Sidebar>
+			<SidebarHeader className="flex items-center justify-between md:pt-10">
 				<h3 className="font-display text-2xl font-medium">dekcpe.link</h3>
 			</SidebarHeader>
 			<SidebarContent>

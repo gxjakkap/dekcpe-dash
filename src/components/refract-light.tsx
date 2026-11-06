@@ -1,17 +1,18 @@
 "use client"
 
+import { Pause, Play } from "lucide-react"
 import { type ReactNode, useEffect, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 
 const VERT = "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}"
 
-// Tileable water caustics: a bright net over the pool shade, split faintly at the brightest seams
+// Tileable water caustics: a bright net over the pool shade, pool blue only
 const FRAG = `
 precision highp float;
 uniform vec2 uRes;
 uniform float uTime;
 uniform float uScale;
-uniform vec3 uShade, uLight, uSpecA, uSpecB;
+uniform vec3 uShade, uLight;
 float caustic(vec2 uv, float t) {
 	vec2 p = mod(uv * 6.28318, 6.28318) - 250.0;
 	vec2 i = p;
@@ -31,11 +32,7 @@ void main() {
 	vec2 uv2 = mat2(0.799, -0.602, 0.602, 0.799) * uv * 0.73 + 0.37;
 	float g2 = caustic(uv2, t * 0.83 + 7.0);
 	float g = clamp(caustic(uv, t) + g2 * 0.7, 0.0, 1.0);
-	float r = clamp(caustic(uv + vec2(0.006, 0.0), t) + g2 * 0.7, 0.0, 1.0);
-	float b = clamp(caustic(uv - vec2(0.006, 0.0), t) + g2 * 0.7, 0.0, 1.0);
-	vec3 col = mix(uShade, uLight, g);
-	col += max(r - g, 0.0) * 0.5 * uSpecA + max(b - g, 0.0) * 0.5 * uSpecB;
-	gl_FragColor = vec4(col, 1.0);
+	gl_FragColor = vec4(mix(uShade, uLight, g), 1.0);
 }`
 
 /** Resolve a colour token (any CSS colour syntax) to 0..1 RGB */
@@ -88,8 +85,6 @@ export function RefractLight({ className, children }: { className?: string; chil
 		const paint = () => {
 			gl.uniform3fv(u("uShade"), tokenRgb("--color-shade"))
 			gl.uniform3fv(u("uLight"), tokenRgb("--color-glint"))
-			gl.uniform3fv(u("uSpecA"), tokenRgb("--spec-1"))
-			gl.uniform3fv(u("uSpecB"), tokenRgb("--spec-4"))
 		}
 		paint()
 		const uRes = u("uRes")
@@ -177,9 +172,9 @@ export function RefractLight({ className, children }: { className?: string; chil
 				<button
 					type="button"
 					onClick={toggle}
-					aria-pressed={held}
-					className="absolute bottom-4 left-4 inline-flex h-11 items-center rounded-full bg-light/80 px-4 text-sm font-medium text-ink shadow-[var(--edge-light),var(--shadow-card)] transition-[background-color] duration-200 ease-out hover:bg-light motion-reduce:transition-none">
-					{held ? "Play the water" : "Pause the water"}
+					aria-label={held ? "Play the water" : "Pause the water"}
+					className="absolute bottom-4 left-4 inline-flex size-11 items-center justify-center rounded-full bg-light/80 text-ink shadow-[var(--edge-light),var(--shadow-card)] transition-[background-color] duration-200 ease-out hover:bg-light motion-reduce:transition-none">
+					{held ? <Play className="size-4" /> : <Pause className="size-4" />}
 				</button>
 			)}
 		</div>
