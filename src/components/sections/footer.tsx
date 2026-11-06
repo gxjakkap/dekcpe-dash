@@ -30,7 +30,7 @@ export default function FooterSection({ className }: { className?: string }) {
 			<div className="max-w-container mx-auto flex flex-col gap-16 px-4 pt-24 pb-8 md:px-16">
 				<div className="grid gap-12 md:grid-cols-12">
 					<p className="font-display text-section leading-[1.02] tracking-[var(--tracking-display)] md:col-span-6">
-						Short links for CPE KMUTT.
+						dekcpe.link
 					</p>
 					{FOOTER_COLUMNS.map((column, i) => (
 						<div
