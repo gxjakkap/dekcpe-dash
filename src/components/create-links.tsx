@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link } from "lucide-react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -12,6 +13,7 @@ import { createShortLink } from "@/app/d/links/create/actions"
 import {
 	AlertDialog,
 	AlertDialogAction,
+	AlertDialogCancel,
 	AlertDialogContent,
 	AlertDialogDescription,
 	AlertDialogFooter,
@@ -40,6 +42,7 @@ const formSchema = z.object({
 
 export default function CreateLinkForm() {
 	const { execute } = useServerAction(createShortLink)
+	const router = useRouter()
 	const [genQr, setGenQr] = useState(false)
 	const [shortLink, setShortLink] = useState("")
 	const [successDialogOpen, setSuccessDialogOpen] = useState(false)
@@ -61,6 +64,8 @@ export default function CreateLinkForm() {
 		setShortLink(data.link)
 		setSuccessDialogOpen(true)
 	}
+
+	const resetForm = () => form.reset({ slug: "", url: "" })
 
 	return (
 		<>
@@ -140,17 +145,14 @@ export default function CreateLinkForm() {
 						)}
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogAction
-							type="button"
-							color="oklch(70.7% 0.022 261.325)"
-							onClick={() => window.location.reload()}>
-							Create Another Link
-						</AlertDialogAction>
+						<AlertDialogCancel onClick={resetForm}>Create Another Link</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={() => {
-								window.location.href = "/d/links"
+								navigator.clipboard.writeText(shortLink)
+								toast(`Link ${shortLink} copied to clipboard!`)
+								router.push("/d/links")
 							}}>
-							Back to Links page
+							Copy and Close
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
