@@ -3,6 +3,7 @@
 import { ChevronUp, Home, LinkIcon, LogOut, Plus, Send, Unlink, User2, Users } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useEffect } from "react"
 import {
 	Sidebar,
 	SidebarContent,
@@ -14,6 +15,7 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	useSidebar,
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "./ui/button"
@@ -69,10 +71,17 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ isAdmin, name }: DashboardSidebarProps) {
 	const pathname = usePathname()
+	const { setOpenMobile } = useSidebar()
+
+	// the mobile sidebar is a sheet over the page: close it once a link has navigated
+	// biome-ignore lint/correctness/useExhaustiveDependencies: runs on route change by design
+	useEffect(() => {
+		setOpenMobile(false)
+	}, [pathname, setOpenMobile])
 	return (
-		<Sidebar className="pt-8">
-			<SidebarHeader className="flex items-center justify-between">
-				<h3 className="text-2xl font-bold">dekcpe.link 🔗</h3>
+		<Sidebar>
+			<SidebarHeader className="flex items-center justify-between md:pt-10">
+				<h3 className="font-display text-2xl font-medium">dekcpe.link</h3>
 			</SidebarHeader>
 			<SidebarContent>
 				<SidebarGroup>

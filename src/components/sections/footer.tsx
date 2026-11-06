@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils"
-import { Footer, FooterBottom, FooterColumn, FooterContent } from "../ui/footer"
 
 const FOOTER_COLUMNS = [
 	{
@@ -27,23 +26,36 @@ const FOOTER_POLICIES: { text: string; href: string }[] = [
 
 export default function FooterSection({ className }: { className?: string }) {
 	return (
-		<footer className={cn("bg-background w-full px-4", className)}>
-			<div className="max-w-container mx-auto">
-				<Footer>
-					<FooterContent>
-						{FOOTER_COLUMNS.map((column) => (
-							<FooterColumn key={column.title}>
-								<h3 className="text-md pt-1 font-semibold">{column.title}</h3>
+		<footer className={cn("w-full bg-paper-2", className)}>
+			<div className="max-w-container mx-auto flex flex-col gap-16 px-4 pt-24 pb-8 md:px-16">
+				<div className="grid gap-12 md:grid-cols-12">
+					<p className="font-display text-section leading-[1.02] tracking-[var(--tracking-display)] md:col-span-6">
+						dekcpe.link
+					</p>
+					{FOOTER_COLUMNS.map((column, i) => (
+						<div
+							key={column.title}
+							className={cn("flex flex-col gap-3 md:col-span-3", i === 0 && "md:col-start-7")}>
+							<h2 className="font-sans text-sm font-medium tracking-normal text-muted-foreground">
+								{column.title}
+							</h2>
+							<ul className="flex flex-col gap-2">
 								{column.links.map((link) => (
-									<a key={link.href} href={link.href} className="text-muted-foreground text-sm">
-										{link.text}
-									</a>
+									<li key={link.href}>
+										<a
+											href={link.href}
+											className="underline-offset-4 transition-colors duration-200 hover:text-primary hover:underline">
+											{link.text}
+										</a>
+									</li>
 								))}
-							</FooterColumn>
-						))}
-					</FooterContent>
-					<FooterBottom>
-						<div>© {new Date().getFullYear()} CPE KMUTT Student</div>
+							</ul>
+						</div>
+					))}
+				</div>
+				<div className="flex flex-col items-start justify-between gap-4 border-t pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center">
+					<p>© {new Date().getFullYear()} CPE KMUTT Student</p>
+					{FOOTER_POLICIES.length > 0 && (
 						<div className="flex items-center gap-4">
 							{FOOTER_POLICIES.map((policy) => (
 								<a key={policy.href} href={policy.href}>
@@ -51,8 +63,8 @@ export default function FooterSection({ className }: { className?: string }) {
 								</a>
 							))}
 						</div>
-					</FooterBottom>
-				</Footer>
+					)}
+				</div>
 			</div>
 		</footer>
 	)

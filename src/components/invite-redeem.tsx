@@ -60,7 +60,7 @@ export function RedeemForm() {
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-3">
+			<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
 				<FormField
 					control={form.control}
 					name="code"
@@ -68,13 +68,18 @@ export function RedeemForm() {
 						<FormItem>
 							<FormLabel>Invite Code</FormLabel>
 							<FormControl>
-								<Input placeholder="e.g. CPE36-WELCOME" autoComplete="off" {...field} />
+								<Input
+									placeholder="e.g. CPE36-WELCOME"
+									autoComplete="off"
+									className="h-12 rounded-inner bg-light px-4 text-base"
+									{...field}
+								/>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
-				<Button type="submit" className="mx-auto w-full" disabled={isPending}>
+				<Button type="submit" size="lg" className="w-full" disabled={isPending} aria-busy={isPending}>
 					{isPending && <LoaderCircle className="animate-spin" />}
 					{isPending ? "Redeeming…" : "Redeem"}
 				</Button>

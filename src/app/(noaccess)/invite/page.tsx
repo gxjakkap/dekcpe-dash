@@ -8,9 +8,9 @@ export const metadata: Metadata = {
 
 export default function InvitePage() {
 	return (
-		<div className="flex flex-1 items-center justify-center px-4 py-16">
-			<div className="flex w-full max-w-sm flex-col gap-6">
-				<h1 className="text-3xl font-bold tracking-tight text-center">Redeem an Invite Code</h1>
+		<div className="max-w-container mx-auto grid w-full flex-1 content-center gap-12 px-4 py-24 md:grid-cols-12 md:px-16">
+			<h1 className="text-display leading-[1.02] md:col-span-6">Redeem an Invite Code</h1>
+			<div className="md:col-span-5 md:col-start-8 md:self-end">
 				<RedeemForm />
 			</div>
 		</div>
