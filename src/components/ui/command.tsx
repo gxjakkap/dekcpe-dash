@@ -111,22 +111,18 @@ function CommandItem({ className, ...props }: React.ComponentProps<typeof Comman
 
 function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) {
 	return (
-		<span
-			data-slot="command-shortcut"
-			className={cn("text-muted-foreground ml-auto text-xs", className)}
-			{...props}
-		/>
+		<span data-slot="command-shortcut" className={cn("text-muted-foreground ml-auto text-xs", className)} {...props} />
 	)
 }
 
 export {
 	Command,
 	CommandDialog,
-	CommandInput,
-	CommandList,
 	CommandEmpty,
 	CommandGroup,
+	CommandInput,
 	CommandItem,
-	CommandShortcut,
+	CommandList,
 	CommandSeparator,
+	CommandShortcut,
 }

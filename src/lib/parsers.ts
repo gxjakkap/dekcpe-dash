@@ -37,8 +37,7 @@ export const getSortingStateParser = <TData>(originalRow?: Row<TData>["original"
 		},
 		serialize: (value) => JSON.stringify(value),
 		eq: (a, b) =>
-			a.length === b.length &&
-			a.every((item, index) => item.id === b[index]?.id && item.desc === b[index]?.desc),
+			a.length === b.length && a.every((item, index) => item.id === b[index]?.id && item.desc === b[index]?.desc),
 	})
 }
 

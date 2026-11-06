@@ -82,8 +82,7 @@ export default function Navigation({
 		{
 			title: "Tabs",
 			href: "/docs/primitives/tabs",
-			description:
-				"A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+			description: "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
 		},
 		{
 			title: "Tooltip",
@@ -117,8 +116,8 @@ export default function Navigation({
 	return (
 		<NavigationMenu className="hidden md:flex">
 			<NavigationMenuList>
-				{menuItems.map((item, index) => (
-					<NavigationMenuItem key={index}>
+				{menuItems.map((item) => (
+					<NavigationMenuItem key={item.title}>
 						{item.isLink ? (
 							<Link href={item.href || ""} legacyBehavior passHref>
 								<NavigationMenuLink className={navigationMenuTriggerStyle()}>{item.title}</NavigationMenuLink>
@@ -140,8 +139,8 @@ export default function Navigation({
 													</a>
 												</NavigationMenuLink>
 											</li>
-											{introItems.map((intro, i) => (
-												<ListItem key={i} href={intro.href} title={intro.title}>
+											{introItems.map((intro) => (
+												<ListItem key={intro.title} href={intro.href} title={intro.title}>
 													{intro.description}
 												</ListItem>
 											))}

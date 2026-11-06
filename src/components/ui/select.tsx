@@ -115,10 +115,7 @@ function SelectSeparator({ className, ...props }: React.ComponentProps<typeof Se
 	)
 }
 
-function SelectScrollUpButton({
-	className,
-	...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {
+function SelectScrollUpButton({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {
 	return (
 		<SelectPrimitive.ScrollUpButton
 			data-slot="select-scroll-up-button"

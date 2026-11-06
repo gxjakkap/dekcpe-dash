@@ -26,10 +26,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 	}
 
 	return (
-		<DashboardLayoutWrapper
-			isAdmin={session.user.role === ROLES.ADMIN}
-			name={session.user.name}
-			openState={ss}>
+		<DashboardLayoutWrapper isAdmin={session.user.role === ROLES.ADMIN} name={session.user.name} openState={ss}>
 			{children}
 		</DashboardLayoutWrapper>
 	)

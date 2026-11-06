@@ -8,8 +8,7 @@ export default function NoAccessPage() {
 			<h1 className="text-display leading-[1.02] md:col-span-6">You Don&apos;t Have Access Yet</h1>
 			<div className="flex flex-col items-start gap-6 md:col-span-5 md:col-start-8 md:self-end">
 				<p className="text-lead text-muted-foreground">
-					dekcpe.link is for CPE students and staff. If someone gave you an invite code, redeem it to get
-					access.
+					dekcpe.link is for CPE students and staff. If someone gave you an invite code, redeem it to get access.
 				</p>
 				<Button size="lg" asChild>
 					<Link href="/invite">Redeem an Invite Code</Link>

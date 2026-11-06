@@ -39,10 +39,7 @@ export function LinksTable(props: LinksTableProps) {
 			header: "Short Link",
 			cell: ({ row }) => {
 				const shortUrl = stripProtocol(
-					new URL(
-						row.getValue("slug"),
-						process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/"
-					).toString()
+					new URL(row.getValue("slug"), process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/").toString()
 				)
 				return (
 					<div className="flex items-center gap-2 w-full">

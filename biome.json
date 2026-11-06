@@ -1,56 +1,35 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
+	"$schema": "node_modules/@biomejs/biome/configuration_schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
 		"useIgnoreFile": true
 	},
 	"files": {
-		"ignoreUnknown": false,
-		"includes": [
-			".zed/**",
-			".vscode/**",
-			"apps/**",
-			"packages/**",
-			"scripts/**",
-			"src/**",
-			"test/**",
-			"package.json",
-			"tsconfig.json",
-			"jest.config.ts",
-			"README.md",
-			"biome.json",
-			".gitattributes",
-			".gitignore"
-		]
+		"ignoreUnknown": true,
+		"includes": ["**", "!**/*.svg", "!drizzle/meta"]
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"indentStyle": "tab",
+		"lineWidth": 120
 	},
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"preset": "recommended"
 		}
 	},
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "double",
 			"semicolons": "asNeeded",
-			"lineEnding": "lf",
-			"lineWidth": 110,
-			"bracketSameLine": true,
-			"enabled": true,
 			"trailingCommas": "es5",
-			"bracketSpacing": true,
-			"indentStyle": "tab",
-			"quoteProperties": "asNeeded"
-		}
-	},
-	"css": {
-		"parser": {
-			"tailwindDirectives": true
+			"bracketSameLine": true,
+			"lineEnding": "lf",
+			"jsxQuoteStyle": "double",
+			"trailingNewline": true,
+			"bracketSpacing": true
 		}
 	},
 	"assist": {
@@ -59,6 +38,11 @@
 			"source": {
 				"organizeImports": "on"
 			}
+		}
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
 		}
 	}
 }

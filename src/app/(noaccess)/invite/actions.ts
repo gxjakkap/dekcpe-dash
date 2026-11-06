@@ -34,7 +34,7 @@ export const redeemInviteCode = authedProcedure
 		const exp = dayjs(res.expirationDate)
 		const now = dayjs()
 
-		if (!!res.expirationDate && exp.isBefore(now)) {
+		if (res.expirationDate && exp.isBefore(now)) {
 			return {
 				status: RedeemInviteCodeStatus.EXPIRED,
 				code: code,

@@ -24,9 +24,7 @@ export const createShortLink = authorizedProcedure
 						.regex(/^[a-zA-Z0-9_-]+$/, "Slug can only contain letters, numbers, hyphens, and underscores.")
 				)
 				.optional(),
-			url: z
-				.string()
-				.regex(/^https?:\/\/[^\s<>"]+$/, "Enter a full URL that starts with http:// or https://"),
+			url: z.string().regex(/^https?:\/\/[^\s<>"]+$/, "Enter a full URL that starts with http:// or https://"),
 		})
 	)
 	.handler(async ({ input, ctx }) => {
@@ -34,8 +32,7 @@ export const createShortLink = authorizedProcedure
 		let sl = slug
 		if (sl && sl.length > 0) {
 			const [l] = await db.select().from(links).where(eq(links.slug, sl)).limit(1)
-			if (l)
-				throw new CustomError("SlugAlreadyExistedError", "That slug is already taken. Try a different one.")
+			if (l) throw new CustomError("SlugAlreadyExistedError", "That slug is already taken. Try a different one.")
 		} else {
 			const buf = Crypto.randomBytes(Math.floor((RANDOM_SLUG_LENGTH * 3) / 4))
 			sl = buf.toString("base64url")

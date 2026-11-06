@@ -81,9 +81,7 @@ export function DataTable<TData, TValue>({
 		}
 	}, [])
 
-	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-		initialState?.columnVisibility ?? {}
-	)
+	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(initialState?.columnVisibility ?? {})
 
 	const [page, setPage] = useQueryState("page", parseAsInteger.withOptions(queryStateOptions).withDefault(1))
 
@@ -235,9 +233,7 @@ export function DataTable<TData, TValue>({
 											key={header.id}
 											className="first:pl-4 last:pr-4"
 											style={{ width: `${header.getSize()}px` }}>
-											{header.isPlaceholder
-												? null
-												: flexRender(header.column.columnDef.header, header.getContext())}
+											{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
 										</TableHead>
 									)
 								})}

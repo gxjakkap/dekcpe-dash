@@ -77,6 +77,7 @@ export function RefractLight({ className, children }: { className?: string; chil
 		gl.attachShader(prog, fs)
 		gl.linkProgram(prog)
 		if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return
+		// biome-ignore lint/correctness/useHookAtTopLevel: WebGL call, not a React hook
 		gl.useProgram(prog)
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer())
@@ -170,6 +171,7 @@ export function RefractLight({ className, children }: { className?: string; chil
 
 	return (
 		<div className={cn("relative isolate overflow-hidden bg-shade", className)}>
+			{/* biome-ignore lint/a11y/noAriaHiddenOnFocusable: decorative canvas, not focusable */}
 			<canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 -z-10 size-full" />
 			{children}
 			{moving && (

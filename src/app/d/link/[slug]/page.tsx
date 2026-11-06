@@ -40,10 +40,7 @@ export default async function LinkPage({ params }: Props) {
 				<div className="mb-8 min-w-0">
 					<h1 className="font-mono text-3xl md:text-4xl font-semibold tracking-tight text-brand break-all max-w-none">
 						{stripProtocol(
-							new URL(
-								linkRes.slug,
-								process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/"
-							).toString()
+							new URL(linkRes.slug, process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/").toString()
 						)}
 					</h1>
 					<p className="mt-2 text-base md:text-lg text-muted-foreground truncate">→ {linkRes.url}</p>

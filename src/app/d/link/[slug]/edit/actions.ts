@@ -11,9 +11,7 @@ export const editShortLink = authorizedProcedure
 	.createServerAction()
 	.input(
 		z.object({
-			url: z
-				.string()
-				.regex(/^https?:\/\/[^\s<>"]+$/, "Enter a full URL that starts with http:// or https://"),
+			url: z.string().regex(/^https?:\/\/[^\s<>"]+$/, "Enter a full URL that starts with http:// or https://"),
 			slug: z.string(),
 		})
 	)

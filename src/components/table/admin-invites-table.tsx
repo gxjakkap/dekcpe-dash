@@ -440,9 +440,7 @@ export function AdminInviteTable({ data }: InviteTableProps) {
 									{headerGroup.headers.map((header) => {
 										return (
 											<TableHead key={header.id}>
-												{header.isPlaceholder
-													? null
-													: flexRender(header.column.columnDef.header, header.getContext())}
+												{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
 											</TableHead>
 										)
 									})}
@@ -454,9 +452,7 @@ export function AdminInviteTable({ data }: InviteTableProps) {
 								table.getRowModel().rows.map((row) => (
 									<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
 										{row.getVisibleCells().map((cell) => (
-											<TableCell key={cell.id}>
-												{flexRender(cell.column.columnDef.cell, cell.getContext())}
-											</TableCell>
+											<TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
 										))}
 									</TableRow>
 								))
@@ -482,11 +478,7 @@ export function AdminInviteTable({ data }: InviteTableProps) {
 							disabled={!table.getCanPreviousPage()}>
 							Previous
 						</Button>
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => table.nextPage()}
-							disabled={!table.getCanNextPage()}>
+						<Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
 							Next
 						</Button>
 					</div>

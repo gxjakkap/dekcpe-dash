@@ -30,9 +30,7 @@ export default function LinkInfo({
 					<div className="space-y-2">
 						<div className="text-sm font-medium text-muted-foreground">Link</div>
 						<div className="flex items-center gap-2">
-							<div className="font-mono text-sm bg-muted text-brand p-2 rounded flex-1 truncate">
-								{shortlink}
-							</div>
+							<div className="font-mono text-sm bg-muted text-brand p-2 rounded flex-1 truncate">{shortlink}</div>
 							<Button
 								variant="ghost"
 								size="icon"

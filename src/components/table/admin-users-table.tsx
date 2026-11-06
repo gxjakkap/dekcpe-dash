@@ -362,9 +362,7 @@ export function AdminUserTable({ data }: UserTableProps) {
 								{headerGroup.headers.map((header) => {
 									return (
 										<TableHead key={header.id}>
-											{header.isPlaceholder
-												? null
-												: flexRender(header.column.columnDef.header, header.getContext())}
+											{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
 										</TableHead>
 									)
 								})}
@@ -376,9 +374,7 @@ export function AdminUserTable({ data }: UserTableProps) {
 							table.getRowModel().rows.map((row) => (
 								<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
 									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id}>
-											{flexRender(cell.column.columnDef.cell, cell.getContext())}
-										</TableCell>
+										<TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
 									))}
 								</TableRow>
 							))
@@ -393,9 +389,7 @@ export function AdminUserTable({ data }: UserTableProps) {
 				</Table>
 			</div>
 			<div className="flex items-center justify-end space-x-2 py-4">
-				<div className="flex-1 text-sm text-muted-foreground">
-					{table.getFilteredRowModel().rows.length} users
-				</div>
+				<div className="flex-1 text-sm text-muted-foreground">{table.getFilteredRowModel().rows.length} users</div>
 				<div className="space-x-2">
 					<Button
 						variant="outline"
@@ -404,11 +398,7 @@ export function AdminUserTable({ data }: UserTableProps) {
 						disabled={!table.getCanPreviousPage()}>
 						Previous
 					</Button>
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => table.nextPage()}
-						disabled={!table.getCanNextPage()}>
+					<Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
 						Next
 					</Button>
 				</div>

@@ -53,21 +53,13 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
 
 function TableCell({ className, ...props }: React.ComponentProps<"td">) {
 	return (
-		<td
-			data-slot="table-cell"
-			className={cn("p-3 align-middle [&:has([role=checkbox])]:pr-0", className)}
-			{...props}
-		/>
+		<td data-slot="table-cell" className={cn("p-3 align-middle [&:has([role=checkbox])]:pr-0", className)} {...props} />
 	)
 }
 
 function TableCaption({ className, ...props }: React.ComponentProps<"caption">) {
 	return (
-		<caption
-			data-slot="table-caption"
-			className={cn("text-muted-foreground mt-4 text-sm", className)}
-			{...props}
-		/>
+		<caption data-slot="table-caption" className={cn("text-muted-foreground mt-4 text-sm", className)} {...props} />
 	)
 }
 
