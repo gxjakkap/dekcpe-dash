@@ -15,7 +15,7 @@ export const redeemInviteCode = authedProcedure
 		z.object({
 			code: z
 				.string({ message: "Invite code must be a string" })
-				.min(3, { message: "Invite code must be longer that 3 letters" }),
+				.min(3, { message: "Invite codes are at least 3 characters." }),
 		})
 	)
 	.handler(async ({ input, ctx }) => {

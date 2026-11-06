@@ -7,6 +7,7 @@ import LinkQuickStats from "@/components/links/link-quick-stats"
 import { db } from "@/db"
 import { clicks, links } from "@/db/schema"
 import { auth } from "@/lib/auth"
+import { formatDate, stripProtocol } from "@/lib/utils"
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -36,11 +37,16 @@ export default async function LinkPage({ params }: Props) {
 	return (
 		<div className="min-h-screen bg-background">
 			<div className="container mx-auto px-4 py-8 max-w-6xl">
-				<div className="mb-8">
-					<div className="flex items-center gap-3 mb-2">
-						<h1 className="text-4xl font-bold tracking-tight">Link Management</h1>
-					</div>
-					<p className="text-xl text-muted-foreground">/{linkRes.slug}</p>
+				<div className="mb-8 min-w-0">
+					<h1 className="font-mono text-3xl md:text-4xl font-semibold tracking-tight text-brand break-all">
+						{stripProtocol(
+							new URL(
+								linkRes.slug,
+								process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/"
+							).toString()
+						)}
+					</h1>
+					<p className="mt-2 text-base md:text-lg text-muted-foreground truncate">→ {linkRes.url}</p>
 				</div>
 
 				<div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
@@ -48,8 +54,8 @@ export default async function LinkPage({ params }: Props) {
 						<LinkInfo
 							slug={linkRes.slug}
 							dest={linkRes.url}
-							dateCreated={linkRes.createdAt.toLocaleDateString()}
-							dateModified={linkRes.updatedAt.toLocaleDateString()}
+							dateCreated={formatDate(linkRes.createdAt)}
+							dateModified={formatDate(linkRes.updatedAt)}
 							className="h-fit"
 						/>
 					</div>

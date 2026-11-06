@@ -18,6 +18,7 @@ import * as React from "react"
 import { toast } from "sonner"
 import { deleteUser, updateUser } from "@/app/d/a/users/actions"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
 	Dialog,
@@ -37,8 +38,8 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-//import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import type { ROLES } from "@/lib/const"
 
@@ -77,7 +78,7 @@ const EditDialog = ({ isOpen, onClose, data, onUpdate, isPending }: EditDialogPr
 		<Dialog open={isOpen} onOpenChange={onClose}>
 			<DialogContent className="sm:max-w-md">
 				<DialogHeader>
-					<DialogTitle>Edit User Information</DialogTitle>
+					<DialogTitle>Edit User</DialogTitle>
 					<DialogDescription>
 						{data.name} ({data.email})
 					</DialogDescription>
@@ -85,15 +86,15 @@ const EditDialog = ({ isOpen, onClose, data, onUpdate, isPending }: EditDialogPr
 				<form action={() => onUpdate(formData)}>
 					<div className="grid gap-4 py-4">
 						<div className="grid grid-cols-4 items-center gap-4">
-							<Label className="text-right capitalize">Role</Label>
+							<Label className="text-right">Role</Label>
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
 									<Button variant="outline" className="w-32">
-										{formData.role?.replace(/([A-Z])/g, " $1").trim()}
+										{ROLE_LABELS[formData.role ?? ""] ?? formData.role}
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent className="w-56">
-									<DropdownMenuLabel>Select user&apos;s role</DropdownMenuLabel>
+									<DropdownMenuLabel>Role</DropdownMenuLabel>
 									<DropdownMenuSeparator />
 									<DropdownMenuRadioGroup
 										value={formData.role || "NULL"}
@@ -111,7 +112,7 @@ const EditDialog = ({ isOpen, onClose, data, onUpdate, isPending }: EditDialogPr
 							Cancel
 						</Button>
 						<Button type="submit" disabled={isPending}>
-							{isPending ? "Saving..." : "Save changes"}
+							{isPending ? "Saving…" : "Save Changes"}
 						</Button>
 					</DialogFooter>
 				</form>
@@ -133,17 +134,15 @@ const DeleteDialog = ({ isOpen, onClose, onConfirm, userName, isPending }: Delet
 		<Dialog open={isOpen} onOpenChange={onClose}>
 			<DialogContent className="sm:max-w-md">
 				<DialogHeader>
-					<DialogTitle>Confirm Deletion</DialogTitle>
-					<DialogDescription>
-						Are you sure you want to delete the user {userName}? This action cannot be undone.
-					</DialogDescription>
+					<DialogTitle>Delete {userName}?</DialogTitle>
+					<DialogDescription>Their account will be removed. This can&apos;t be undone.</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
 					<Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
 						Cancel
 					</Button>
 					<Button type="button" variant="destructive" onClick={onConfirm} disabled={isPending}>
-						{isPending ? "Deleting..." : "Delete"}
+						{isPending ? "Deleting…" : "Delete User"}
 					</Button>
 				</DialogFooter>
 			</DialogContent>
@@ -168,12 +167,12 @@ const ActionCell = ({ row }: { row: Row<UserColumn> }) => {
 						role: data.role as ROLES,
 					},
 				})
-				if (err) throw err
-				toast("Record updated succesfully")
+				if (err) throw new Error(err.message)
+				toast.success(`Updated ${data.name}`)
 				setIsEditOpen(false)
 				router.refresh()
 			} catch (error) {
-				toast("Failed to update record")
+				toast.error(error instanceof Error ? error.message : "Couldn't update this user. Try again.")
 				console.error(error)
 			}
 		})
@@ -185,12 +184,12 @@ const ActionCell = ({ row }: { row: Row<UserColumn> }) => {
 				const [, err] = await deleteUser({
 					id: data.id,
 				})
-				if (err) throw err
-				toast("Record deleted succesfully")
+				if (err) throw new Error(err.message)
+				toast.success(`Deleted ${data.name}`)
 				setIsDeleteOpen(false)
 				router.refresh()
 			} catch (error) {
-				toast("Failed to delete record")
+				toast.error(error instanceof Error ? error.message : "Couldn't delete this user. Try again.")
 				console.error(error)
 			}
 		})
@@ -236,15 +235,13 @@ const ActionCell = ({ row }: { row: Row<UserColumn> }) => {
 	)
 }
 
+const ROLE_LABELS: Record<string, string> = {
+	admin: "Admin",
+	user: "User",
+	unauthorized: "No Access",
+}
+
 const createColumns = (): ColumnDef<UserColumn>[] => [
-	{
-		accessorKey: "id",
-		header: "ID",
-		cell: ({ row }) => {
-			const shrt = (row.getValue("id") as string).substring(0, 4)
-			return <div>{shrt}</div>
-		},
-	},
 	{
 		accessorKey: "name",
 		header: "Name",
@@ -258,15 +255,20 @@ const createColumns = (): ColumnDef<UserColumn>[] => [
 	{
 		accessorKey: "role",
 		header: "Role",
-		cell: ({ row }) => <div>{row.getValue("role")}</div>,
+		cell: ({ row }) => {
+			const role = row.getValue("role") as string
+			return <Badge variant={role === "admin" ? "outline" : "secondary"}>{ROLE_LABELS[role] ?? role}</Badge>
+		},
 	},
 	{
 		accessorKey: "banned",
-		header: "Banned",
-		cell: ({ row }) => {
-			const banned = row.getValue("banned")
-			return <div>{banned === null ? "N/A" : String(banned)}</div>
-		},
+		header: "Status",
+		cell: ({ row }) =>
+			row.getValue("banned") ? (
+				<Badge variant="destructive">Banned</Badge>
+			) : (
+				<span className="text-muted-foreground">Active</span>
+			),
 	},
 	{
 		accessorKey: "action",
@@ -275,7 +277,7 @@ const createColumns = (): ColumnDef<UserColumn>[] => [
 	},
 ]
 
-const filterKeys: Array<keyof UserColumn> = ["id", "name", "email"]
+const filterKeys: Array<keyof UserColumn> = ["name", "email"]
 
 export function AdminUserTable({ data }: UserTableProps) {
 	const [sorting, setSorting] = React.useState<SortingState>([])
@@ -284,8 +286,6 @@ export function AdminUserTable({ data }: UserTableProps) {
 	const [rowSelection, setRowSelection] = React.useState({})
 
 	const columns = React.useMemo(() => createColumns(), [])
-
-	console.log(data)
 
 	const table = useReactTable({
 		data,
@@ -323,14 +323,13 @@ export function AdminUserTable({ data }: UserTableProps) {
 	return (
 		<div className="md:mx-10">
 			<div className="flex items-center py-4">
-				{/* <Input
-                    placeholder="Search"
-                    value={table.getState().globalFilter ?? ""}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                        table.setGlobalFilter(event.target.value)
-                    }
-                    className="max-w-sm"
-                /> */}
+				<Input
+					placeholder="Search by name or email"
+					aria-label="Search users"
+					value={globalFilter}
+					onChange={(event) => setGlobalFilter(event.target.value)}
+					className="max-w-sm"
+				/>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant="outline" className="ml-auto">
@@ -395,8 +394,7 @@ export function AdminUserTable({ data }: UserTableProps) {
 			</div>
 			<div className="flex items-center justify-end space-x-2 py-4">
 				<div className="flex-1 text-sm text-muted-foreground">
-					{table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length}{" "}
-					row(s) selected.
+					{table.getFilteredRowModel().rows.length} users
 				</div>
 				<div className="space-x-2">
 					<Button

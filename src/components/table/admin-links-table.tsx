@@ -4,6 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table"
 import { Copy, ExternalLink } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import { formatDate, stripProtocol } from "@/lib/utils"
 import type { InitialStateTablePage } from "@/types"
 import { DataTable } from "./tablecomponents"
 
@@ -35,16 +36,15 @@ export function AdminLinksTable(props: AdminLinksTableProps) {
 			accessorKey: "slug",
 			header: "Short Link",
 			cell: ({ row }) => {
-				const shortUrl = new URL(
-					row.getValue("slug"),
-					process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/"
+				const shortUrl = stripProtocol(
+					new URL(
+						row.getValue("slug"),
+						process.env.NEXT_PUBLIC_SHORTLINK_BASE_URL || "https://dekcpe.link/"
+					).toString()
 				)
-					.toString()
-					.replace("https://", "")
-					.replace("http://", "")
 				return (
 					<div className="flex items-center gap-2 w-full">
-						<code className="bg-muted px-2 py-1 rounded text-sm font-mono truncate flex-1 whitespace-nowrap">
+						<code className="bg-muted text-brand px-2 py-1 rounded text-sm font-mono truncate flex-1 whitespace-nowrap">
 							{shortUrl}
 						</code>
 						<Button
@@ -54,7 +54,7 @@ export function AdminLinksTable(props: AdminLinksTableProps) {
 							onClick={(e) => {
 								e.stopPropagation()
 								navigator.clipboard.writeText(`https://${shortUrl}`)
-								toast(`Link ${shortUrl} copied to clipboard!`)
+								toast.success(`Copied ${shortUrl}`)
 							}}>
 							<Copy className="h-4 w-4" />
 						</Button>
@@ -87,7 +87,7 @@ export function AdminLinksTable(props: AdminLinksTableProps) {
 			header: "Created",
 			cell: ({ row }) => {
 				const date = row.getValue("createdAt") as Date
-				return <div className="text-sm text-muted-foreground">{date.toLocaleDateString()}</div>
+				return <div className="text-sm text-muted-foreground">{formatDate(date)}</div>
 			},
 		},
 	]

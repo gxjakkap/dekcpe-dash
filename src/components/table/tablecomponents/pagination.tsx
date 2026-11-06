@@ -35,8 +35,8 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
 				</div>
 				<div className="flex w-auto items-center justify-center text-sm font-medium">
 					{isMobile
-						? `${table.getState().pagination.pageIndex + 1}/${table.getPageCount()}`
-						: `Page ${table.getState().pagination.pageIndex + 1} from ${table.getPageCount()} pages`}
+						? `${table.getState().pagination.pageIndex + 1}/${Math.max(table.getPageCount(), 1)}`
+						: `Page ${table.getState().pagination.pageIndex + 1} of ${Math.max(table.getPageCount(), 1)}`}
 				</div>
 				<div className="flex items-center space-x-2">
 					<Button

@@ -26,10 +26,10 @@ export default async function EditLinkPage({ params }: Props) {
 
 	return (
 		<div className="flex flex-col w-full pt-4">
-			<div className="flex flex-col w-2/3 mx-auto gap-y-12">
-				<h3 className="text-3xl">Edit /{slug}</h3>
+			<div className="flex flex-col w-full max-w-2xl mx-auto gap-y-8">
+				<h1 className="text-3xl font-bold tracking-tight">Edit /{slug}</h1>
 				<Card className="p-4">
-					<EditLinkForm slug={slug} />
+					<EditLinkForm slug={slug} dest={linkRes.url} />
 				</Card>
 			</div>
 		</div>

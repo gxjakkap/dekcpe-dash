@@ -25,6 +25,13 @@ export function QuickAnalyticsTopCountriesTable(props: QuickAnalyticsTopCountrie
 						</TableRow>
 					</TableHeader>
 					<TableBody>
+						{props.data.length === 0 && (
+							<TableRow>
+								<TableCell colSpan={2} className="h-20 text-center text-muted-foreground">
+									No clicks yet. Share a link to see where clicks come from.
+								</TableCell>
+							</TableRow>
+						)}
 						{props.data.map((x) => (
 							<TableRow key={x.country}>
 								<TableCell className="py-2 font-medium">

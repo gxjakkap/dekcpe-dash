@@ -82,8 +82,8 @@ export default async function DashboardHome() {
 						<Card>
 							<CardContent className="p-4">
 								<div className="flex items-center gap-3">
-									<div className="p-2 bg-primary/10 rounded-lg">
-										<LinkIcon className="h-4 w-4 text-primary" />
+									<div className="p-2 bg-muted rounded-lg">
+										<LinkIcon className="h-4 w-4 text-muted-foreground" />
 									</div>
 									<div>
 										<p className="text-sm text-muted-foreground">Total Links</p>
@@ -96,8 +96,8 @@ export default async function DashboardHome() {
 						<Card>
 							<CardContent className="p-4">
 								<div className="flex items-center gap-3">
-									<div className="p-2 bg-green-100 dark:bg-green-950 rounded-lg">
-										<BarChart3 className="h-4 w-4 text-green-600 dark:text-green-400" />
+									<div className="p-2 bg-muted rounded-lg">
+										<BarChart3 className="h-4 w-4 text-muted-foreground" />
 									</div>
 									<div>
 										<p className="text-sm text-muted-foreground">Total Clicks</p>

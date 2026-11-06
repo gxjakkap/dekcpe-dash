@@ -31,7 +31,7 @@ import {
 	useQueryState,
 	useQueryStates,
 } from "nuqs"
-import { useCallback, useMemo, useState } from "react"
+import { type ReactNode, useCallback, useMemo, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useDebouncedCallback } from "@/hooks/use-debounce-callback"
@@ -53,6 +53,7 @@ interface DataTableProps<TData, TValue> {
 	rowClickable?: boolean
 	hrefColumn?: ColumnDef<TData, TValue> & { accessorKey: keyof TData }
 	hrefPrefix?: string
+	emptyState?: ReactNode
 	className?: string
 }
 
@@ -65,6 +66,7 @@ export function DataTable<TData, TValue>({
 	rowClickable,
 	hrefColumn,
 	hrefPrefix,
+	emptyState = "No results.",
 	className,
 }: DataTableProps<TData, TValue>) {
 	const router = useRouter()
@@ -268,8 +270,8 @@ export function DataTable<TData, TValue>({
 							))
 						) : (
 							<TableRow>
-								<TableCell colSpan={columns.length} className="h-24 text-center font-bold">
-									No entry found
+								<TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
+									{emptyState}
 								</TableCell>
 							</TableRow>
 						)}

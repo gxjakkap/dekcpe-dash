@@ -1,4 +1,5 @@
 "use client"
+import { LoaderCircle } from "lucide-react"
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -13,8 +14,9 @@ export default function SignIn() {
 		<Card className="max-w-md">
 			<CardHeader>
 				<CardTitle className="text-lg md:text-xl">Sign In</CardTitle>
-				<CardDescription className="text-xs md:text-sm">
-					With your KMUTT account to access <span className="font-bold text-primary">dekcpe.link</span>
+				<CardDescription>
+					Use your KMUTT Microsoft account to access{" "}
+					<span className="font-semibold text-foreground">dekcpe.link</span>.
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
@@ -40,11 +42,19 @@ export default function SignIn() {
 									}
 								)
 							}}>
-							<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-								<title>Microsoft Logo</title>
-								<path fill="currentColor" d="M2 3h9v9H2zm9 19H2v-9h9zM21 3v9h-9V3zm0 19h-9v-9h9z"></path>
-							</svg>
-							Sign in with Microsoft
+							{loading ? (
+								<LoaderCircle className="animate-spin" />
+							) : (
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="1em"
+									height="1em"
+									viewBox="0 0 24 24"
+									aria-hidden="true">
+									<path fill="currentColor" d="M2 3h9v9H2zm9 19H2v-9h9zM21 3v9h-9V3zm0 19h-9v-9h9z"></path>
+								</svg>
+							)}
+							{loading ? "Signing In…" : "Sign In with Microsoft"}
 						</Button>
 					</div>
 				</div>

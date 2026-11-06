@@ -9,7 +9,7 @@ export default function SignOut() {
 	const router = useRouter()
 	return (
 		<Button
-			variant="default"
+			variant="outline"
 			onClick={() => {
 				authClient.signOut({
 					fetchOptions: {

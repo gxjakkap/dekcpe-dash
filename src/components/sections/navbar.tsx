@@ -28,7 +28,7 @@ interface NavbarProps {
 
 const MOBILE_LINKS = [{ text: "Dashboard", href: "/d" }]
 
-const ACTIONS: NavbarActionProps[] = [{ text: "Sign in", href: "/d", isButton: true, variant: "default" }]
+const ACTIONS: NavbarActionProps[] = [{ text: "Sign In", href: "/d", isButton: true, variant: "default" }]
 
 export default function Navbar({
 	customActionComponent = null,
@@ -74,9 +74,6 @@ export default function Navbar({
 							</SheetTrigger>
 							<SheetContent side="right">
 								<nav className="grid gap-6 text-lg font-medium">
-									<Link href={"/d"} className="flex items-center gap-2 text-xl font-bold">
-										<span>dekcpe.link</span>
-									</Link>
 									{MOBILE_LINKS.map((link) => (
 										<a
 											key={link.href}

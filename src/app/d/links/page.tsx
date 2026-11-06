@@ -56,12 +56,12 @@ export default async function LinksPage() {
 							</div>
 							<p className="text-base md:text-xl text-muted-foreground">Manage your links</p>
 						</div>
-						<Link href={"/d/links/create"}>
-							<Button size="lg" className="gap-2">
+						<Button size="lg" className="gap-2" asChild>
+							<Link href={"/d/links/create"}>
 								<Plus className="h-4 w-4" />
 								Create New Link
-							</Button>
-						</Link>
+							</Link>
+						</Button>
 					</div>
 				</div>
 

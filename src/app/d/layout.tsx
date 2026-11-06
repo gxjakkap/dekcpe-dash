@@ -1,7 +1,6 @@
 import { cookies, headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { DashboardLayoutWrapper } from "@/components/dashboard-layout-wrapper"
-import FooterSection from "@/components/sections/footer"
 import { auth } from "@/lib/auth"
 import { ROLES, SIDEBAR_STATUS } from "@/lib/const"
 
@@ -16,8 +15,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
 	const openState = (await cookies()).get("dekcpesidebarstate")?.value
 
-	console.log(`ss cookie: ${openState}`)
-
 	let ss: SIDEBAR_STATUS
 
 	if (typeof openState === "undefined") {
@@ -28,17 +25,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
 		ss = SIDEBAR_STATUS.CLOSE
 	}
 
-	console.log(`ss: ${ss}`)
-
 	return (
-		<>
-			<DashboardLayoutWrapper
-				isAdmin={session.user.role === ROLES.ADMIN}
-				name={session.user.name}
-				openState={ss}>
-				{children}
-			</DashboardLayoutWrapper>
-			<FooterSection />
-		</>
+		<DashboardLayoutWrapper
+			isAdmin={session.user.role === ROLES.ADMIN}
+			name={session.user.name}
+			openState={ss}>
+			{children}
+		</DashboardLayoutWrapper>
 	)
 }

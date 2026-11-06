@@ -43,17 +43,17 @@ export const items: NavItem[] = [
 
 export const adminItems: NavItem[] = [
 	{
-		title: "Manage Users",
+		title: "Users",
 		url: "/d/a/users",
 		icon: Users,
 	},
 	{
-		title: "Manage Invite",
+		title: "Invites",
 		url: "/d/a/invites",
 		icon: Send,
 	},
 	{
-		title: "Manage All Links",
+		title: "All Links",
 		url: "/d/a/all",
 		icon: Unlink,
 	},

@@ -1,4 +1,3 @@
-import { ArrowRightIcon } from "lucide-react"
 import type { ReactNode } from "react"
 import Github from "@/components/logos/github"
 import { AuroraText } from "@/components/magicui/aurora-text"
@@ -35,17 +34,13 @@ const siteConfig = {
 }
 
 const HERO_DATA: HeroData = {
-	title: "Short link have never been",
+	title: "Short links have never been",
 	title_aurora: "easier",
 	description: "From link shortening to QR code generation, we got you covered.",
 	badge: (
 		<Badge variant="outline" className="animate-appear">
-			<span className="font-semibold text-primary">Exclusive to CPE Students and Staff!</span>
-			<span>🎉</span>
-			<a href={siteConfig.getStartedUrl} className="flex items-center gap-1">
-				Try it now
-				<ArrowRightIcon className="size-3" />
-			</a>
+			<span className="font-semibold">Exclusive to CPE Students and Staff!</span>
+			<span aria-hidden="true">🎉</span>
 		</Badge>
 	),
 	buttons: [
@@ -56,7 +51,7 @@ const HERO_DATA: HeroData = {
 		},
 		{
 			href: siteConfig.links.github,
-			text: "Github",
+			text: "GitHub",
 			variant: "outline",
 			icon: <Github className="mr-2 size-4" />,
 		},

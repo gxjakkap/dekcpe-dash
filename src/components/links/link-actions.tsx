@@ -16,18 +16,18 @@ export default function LinkActions(props: LinkActionsProps) {
 				<CardTitle className="text-lg">Actions</CardTitle>
 			</CardHeader>
 			<CardContent className="space-y-3">
-				<Link href={`/d/link/${props.slug}/edit`} className="block w-full">
-					<Button className="w-full justify-start" variant="default">
+				<Button className="w-full justify-start" asChild>
+					<Link href={`/d/link/${props.slug}/edit`}>
 						<Edit className="mr-2 h-4 w-4" />
 						Edit Link
-					</Button>
-				</Link>
-				<Link href={props.dest} target="_blank" rel="noopener noreferrer" className="block w-full">
-					<Button className="w-full justify-start" variant="outline">
+					</Link>
+				</Button>
+				<Button className="w-full justify-start" variant="outline" asChild>
+					<a href={props.dest} target="_blank" rel="noopener noreferrer">
 						<ExternalLink className="mr-2 h-4 w-4" />
-						Visit Link
-					</Button>
-				</Link>
+						Open Destination
+					</a>
+				</Button>
 				<div className="pt-2 border-t">
 					<LinkDeleteDialog slug={props.slug}>
 						<Button className="w-full justify-start" variant="destructive">

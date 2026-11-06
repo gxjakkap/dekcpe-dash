@@ -131,8 +131,8 @@
 }
 
 :root {
-	/* Accent colors */
-	--brand: oklch(0.5093 0.1233 269.49);
+	/* Accent colors: orange is only for primary actions and the short link itself */
+	--brand: oklch(0.54 0.16 50); /* text-safe orange, 5.4:1 on white */
 	--brand-foreground: oklch(75.77% 0.159 55.91);
 
 	/* Customized shadcn/ui colors */
@@ -142,8 +142,8 @@
 	--card-foreground: oklch(0.141 0.005 285.823);
 	--popover: oklch(1 0 0);
 	--popover-foreground: oklch(0.141 0.005 285.823);
-	--primary: oklch(0.5093 0.1233 269.49);
-	--primary-foreground: oklch(0.985 0 0);
+	--primary: oklch(75.77% 0.159 55.91);
+	--primary-foreground: oklch(0.21 0.006 285.885); /* 7.8:1 on primary */
 	--secondary: oklch(0.967 0.001 286.375);
 	--secondary-foreground: oklch(0.21 0.006 285.885);
 	--muted: oklch(0.967 0.001 286.375);
@@ -181,7 +181,7 @@
 
 .dark {
 	/* Accent colors */
-	--brand: oklch(83.6% 0.1177 66.87);
+	--brand: oklch(75.77% 0.159 55.91); /* 8.8:1 on dark background */
 	--brand-foreground: oklch(75.77% 0.159 55.91);
 
 	/* Customized shadcn/ui colors */
@@ -191,7 +191,7 @@
 	--card-foreground: oklch(0.985 0 0);
 	--popover: oklch(0.141 0.005 285.823);
 	--popover-foreground: oklch(0.985 0 0);
-	--primary: oklch(0.985 0 0);
+	--primary: oklch(75.77% 0.159 55.91);
 	--primary-foreground: oklch(0.21 0.006 285.885);
 	--secondary: oklch(0.274 0.006 286.033);
 	--secondary-foreground: oklch(0.985 0 0);

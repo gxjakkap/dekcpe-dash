@@ -52,7 +52,7 @@ export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps
 						}
 					}}>
 					<Settings2 className="size-4" />
-					Edit column
+					Columns
 					<ChevronsUpDown className="ml-auto size-4 shrink-0 opacity-50" />
 				</Button>
 			</PopoverTrigger>
