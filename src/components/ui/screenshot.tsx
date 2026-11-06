@@ -25,7 +25,7 @@ export default function Screenshot({ srcLight, srcDark, alt, width, height, clas
 	}, [resolvedTheme, srcLight, srcDark])
 
 	if (!src) {
-		return <div style={{ width, height }} className={cn("bg-muted", className)} aria-label={alt} />
+		return <div style={{ width, height }} className={cn("bg-muted", className)} role="img" aria-label={alt} />
 	}
 
 	return <Image src={src} alt={alt} width={width} height={height} className={className} />
