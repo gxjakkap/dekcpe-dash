@@ -21,7 +21,7 @@ import {
 	useReactTable,
 	type VisibilityState,
 } from "@tanstack/react-table"
-import { RedirectType, redirect } from "next/navigation"
+import { useRouter } from "next/navigation"
 import {
 	type Parser,
 	parseAsArrayOf,
@@ -67,6 +67,7 @@ export function DataTable<TData, TValue>({
 	hrefPrefix,
 	className,
 }: DataTableProps<TData, TValue>) {
+	const router = useRouter()
 	const queryStateOptions = useMemo<Omit<UseQueryStateOptions<string>, "parse">>(() => {
 		return {
 			history: "push",
@@ -244,7 +245,10 @@ export function DataTable<TData, TValue>({
 					<TableBody>
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
-								<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+								<TableRow
+									key={row.id}
+									data-state={row.getIsSelected() && "selected"}
+									className={rowClickable ? "cursor-pointer" : undefined}>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell
 											key={cell.id}
@@ -253,7 +257,7 @@ export function DataTable<TData, TValue>({
 												if (rowClickable && hrefColumn) {
 													const hrefVal = row.original[hrefColumn.accessorKey as keyof TData] as string
 													if (cell.column.id !== "action") {
-														redirect(`/${hrefPrefix ?? ""}${hrefVal}`, RedirectType.push)
+														router.push(`/${hrefPrefix ?? ""}${hrefVal}`)
 													}
 												}
 											}}>

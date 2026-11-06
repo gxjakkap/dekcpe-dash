@@ -1,9 +1,10 @@
 "use client"
 
+import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { SIDEBAR_STATUS } from "@/lib/const"
-import { DashboardSidebar } from "./dashboard-sidebar"
+import { adminItems, DashboardSidebar, isItemActive, items } from "./dashboard-sidebar"
 
 export function DashboardLayoutWrapper({
 	children,
@@ -18,6 +19,8 @@ export function DashboardLayoutWrapper({
 }) {
 	const [sidebarOpen, setSidebarOpen] = useState(openState === SIDEBAR_STATUS.OPEN)
 	const [mounted, setMounted] = useState(false)
+	const pathname = usePathname()
+	const title = [...items, ...adminItems].find((item) => isItemActive(item, pathname))?.title
 
 	console.log(`client ss: ${openState}`)
 
@@ -35,6 +38,7 @@ export function DashboardLayoutWrapper({
 				<SidebarInset>
 					<header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
 						<SidebarTrigger className="z-50" />
+						{title && <span className="font-medium">{title}</span>}
 					</header>
 					<main className="flex-1 w-full relative overflow-x-auto px-6 pt-4">{children}</main>
 				</SidebarInset>
@@ -48,6 +52,7 @@ export function DashboardLayoutWrapper({
 			<SidebarInset>
 				<header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
 					<SidebarTrigger className="z-50" />
+					{title && <span className="font-medium">{title}</span>}
 				</header>
 				<main className="flex-1 w-full relative overflow-x-auto px-6 lg:px-12 pt-4">{children}</main>
 			</SidebarInset>

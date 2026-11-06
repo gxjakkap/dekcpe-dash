@@ -33,14 +33,15 @@ export default function LinkInfo({
 							<div className="font-mono text-sm bg-muted p-2 rounded flex-1 truncate">{shortlink}</div>
 							<Button
 								variant="ghost"
-								size="sm"
-								className="h-4 w-4 text-muted-foreground"
+								size="icon"
+								className="text-muted-foreground"
+								aria-label="Copy short link"
 								onClick={(e) => {
 									e.stopPropagation()
 									navigator.clipboard.writeText(shortlink)
 									toast(`Link ${shortlink} copied to clipboard!`)
 								}}>
-								<Copy className="h-3 w-3" />
+								<Copy className="h-4 w-4" />
 							</Button>
 						</div>
 					</div>
@@ -61,8 +62,9 @@ export default function LinkInfo({
 							<a
 								href={dest}
 								target="_blank"
-								rel="noopener, noreferer"
-								className="hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 rounded-xl p-1">
+								rel="noopener noreferrer"
+								aria-label="Open destination in new tab"
+								className="hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 rounded-md p-2.5">
 								<ExternalLink className="h-4 w-4 text-muted-foreground" />
 							</a>
 						</div>

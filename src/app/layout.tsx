@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { Prompt } from "next/font/google"
+import { ThemeProvider } from "next-themes"
 import { NuqsAdapter } from "nuqs/adapters/next/app"
 
 import "./globals.css"
@@ -19,10 +20,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
-		<html lang="en">
-			<body className={`${prompt.variable} antialiased`}>
-				<NuqsAdapter>{children}</NuqsAdapter>
-				<Toaster />
+		<html lang="en" className={prompt.variable} suppressHydrationWarning>
+			<body className="font-sans antialiased">
+				<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+					<NuqsAdapter>{children}</NuqsAdapter>
+					<Toaster />
+				</ThemeProvider>
 			</body>
 		</html>
 	)

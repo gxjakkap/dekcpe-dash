@@ -2,6 +2,7 @@
 
 import type { ColumnDef } from "@tanstack/react-table"
 import { Copy, ExternalLink } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import type { InitialStateTablePage } from "@/types"
 import { DataTable } from "./tablecomponents"
@@ -48,13 +49,14 @@ export function AdminLinksTable(props: AdminLinksTableProps) {
 						</code>
 						<Button
 							variant="ghost"
-							size="sm"
-							className="h-6 w-6 p-0"
+							size="icon"
+							aria-label="Copy short link"
 							onClick={(e) => {
 								e.stopPropagation()
 								navigator.clipboard.writeText(`https://${shortUrl}`)
+								toast(`Link ${shortUrl} copied to clipboard!`)
 							}}>
-							<Copy className="h-3 w-3" />
+							<Copy className="h-4 w-4" />
 						</Button>
 					</div>
 				)
@@ -94,14 +96,6 @@ export function AdminLinksTable(props: AdminLinksTableProps) {
 			columns={columns}
 			data={props.data}
 			initialState={props.initialState}
-			rowClickable={true}
-			hrefPrefix="d/a/link/"
-			hrefColumn={
-				columns.find(
-					(c): c is ColumnDef<AdminLinksColumn> & { accessorKey: keyof AdminLinksColumn } =>
-						c.accessorKey === "slug"
-				) ?? undefined
-			}
 			isLoading={false}
 			className="w-full"
 		/>

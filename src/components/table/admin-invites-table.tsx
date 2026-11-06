@@ -13,7 +13,7 @@ import {
 	useReactTable,
 	type VisibilityState,
 } from "@tanstack/react-table"
-import { format } from "date-fns"
+import { format, startOfToday } from "date-fns"
 import { CalendarIcon, ChevronDown, PlusIcon, Trash2 } from "lucide-react"
 import * as React from "react"
 import { useForm } from "react-hook-form"
@@ -174,7 +174,7 @@ const AddDialog = ({ isOpen, onClose, onAdd, isPending }: AddDialogProps) => {
 													mode="single"
 													selected={field.value}
 													onSelect={field.onChange}
-													disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+													disabled={(date) => date < startOfToday()}
 													initialFocus
 												/>
 											</PopoverContent>
@@ -239,9 +239,10 @@ const ActionCell = (row: Row<InviteColumn>) => {
 	const handleDelete = async () => {
 		startTransition(async () => {
 			try {
-				const [_res, _err] = await deleteInviteCode({
+				const [, err] = await deleteInviteCode({
 					code: data.code,
 				})
+				if (err) throw err
 				toast("Record deleted succesfully")
 				setIsDeleteOpen(false)
 				location.reload()
@@ -257,6 +258,7 @@ const ActionCell = (row: Row<InviteColumn>) => {
 			<Button
 				variant="ghost"
 				size="icon"
+				aria-label={`Delete invite ${data.code}`}
 				onClick={() => setIsDeleteOpen(true)}
 				className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
 				disabled={isPending}>

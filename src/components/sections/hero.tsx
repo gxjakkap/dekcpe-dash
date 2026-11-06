@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Section } from "@/components/ui/section"
 import { cn } from "@/lib/utils"
-import { AnimatedGradientText } from "../magicui/animated-gradient-text"
 
 interface HeroButtonProps {
 	href: string
@@ -41,7 +40,7 @@ const HERO_DATA: HeroData = {
 	description: "From link shortening to QR code generation, we got you covered.",
 	badge: (
 		<Badge variant="outline" className="animate-appear">
-			<AnimatedGradientText>Exclusive to CPE Students and Staff!</AnimatedGradientText>
+			<span className="font-semibold text-primary">Exclusive to CPE Students and Staff!</span>
 			<span>🎉</span>
 			<a href={siteConfig.getStartedUrl} className="flex items-center gap-1">
 				Try it now

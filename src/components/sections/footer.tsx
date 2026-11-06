@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils"
 import { Footer, FooterBottom, FooterColumn, FooterContent } from "../ui/footer"
-import { ModeToggle } from "../ui/mode-toggle"
 
 const FOOTER_COLUMNS = [
 	{
@@ -54,7 +53,6 @@ export default function FooterSection({ className }: { className?: string }) {
 									{policy.text}
 								</a>
 							))}
-							<ModeToggle />
 						</div>
 					</FooterBottom>
 				</Footer>

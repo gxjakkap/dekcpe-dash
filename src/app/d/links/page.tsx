@@ -1,5 +1,5 @@
 import { and, count, desc, eq, isNull } from "drizzle-orm"
-import { BarChart3, LinkIcon, Plus } from "lucide-react"
+import { LinkIcon, Plus } from "lucide-react"
 import { headers } from "next/headers"
 import Link from "next/link"
 import { redirect } from "next/navigation"
@@ -45,14 +45,11 @@ export default async function LinksPage() {
 		clickCount: link.clickCount,
 	}))
 
-	const totalLinks = linksData.length
-	const totalClicks = linksData.reduce((sum, link) => sum + link.clickCount, 0)
-
 	return (
 		<div className="min-h-screen bg-background">
 			<div className="container mx-auto px-4 py-8 max-w-7xl">
 				<div className="mb-8">
-					<div className="flex items-center justify-between mb-6">
+					<div className="flex items-center justify-between">
 						<div>
 							<div className="flex items-center gap-3 mb-2">
 								<h1 className="text-3xl md:text-4xl font-bold tracking-tight">Your Links</h1>
@@ -65,36 +62,6 @@ export default async function LinksPage() {
 								Create New Link
 							</Button>
 						</Link>
-					</div>
-
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-6">
-						<Card>
-							<CardContent className="p-4">
-								<div className="flex items-center gap-3">
-									<div className="p-2 bg-primary/10 rounded-lg">
-										<LinkIcon className="h-4 w-4 text-primary" />
-									</div>
-									<div>
-										<p className="text-sm text-muted-foreground">Total Links</p>
-										<p className="text-2xl font-bold">{totalLinks}</p>
-									</div>
-								</div>
-							</CardContent>
-						</Card>
-
-						<Card>
-							<CardContent className="p-4">
-								<div className="flex items-center gap-3">
-									<div className="p-2 bg-green-100 rounded-lg">
-										<BarChart3 className="h-4 w-4 text-green-600" />
-									</div>
-									<div>
-										<p className="text-sm text-muted-foreground">Total Clicks</p>
-										<p className="text-2xl font-bold">{totalClicks}</p>
-									</div>
-								</div>
-							</CardContent>
-						</Card>
 					</div>
 				</div>
 

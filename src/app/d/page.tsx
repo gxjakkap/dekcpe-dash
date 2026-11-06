@@ -1,4 +1,4 @@
-import { count, countDistinct, eq, sql } from "drizzle-orm"
+import { and, count, countDistinct, eq, isNull, sql } from "drizzle-orm"
 import { BarChart3, ChartLine, LinkIcon } from "lucide-react"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
@@ -26,7 +26,7 @@ export default async function DashboardHome() {
 		})
 		.from(links)
 		.leftJoin(clicks, eq(links.id, clicks.linkId))
-		.where(eq(links.owner, session.user.id))
+		.where(and(eq(links.owner, session.user.id), isNull(links.deletedAt)))
 
 	const { linksCount: totalLinks, clickCount: totalClicks } = result
 
@@ -37,7 +37,7 @@ export default async function DashboardHome() {
 		})
 		.from(clicks)
 		.innerJoin(links, sql`clicks.link_id = links.id`)
-		.where(sql`links.owner = ${session.user.id}`)
+		.where(sql`links.owner = ${session.user.id} AND links.deleted_at IS NULL`)
 		.groupBy(sql`COALESCE(NULLIF(clicks.geolocation->>'Country', ''), 'Unknown')`)
 		.orderBy(sql`COUNT(*) DESC`)
 		.limit(10)
@@ -48,16 +48,16 @@ export default async function DashboardHome() {
 		})
 		.from(clicks)
 		.innerJoin(links, eq(clicks.linkId, links.id))
-		.where(eq(links.owner, session.user.id))
+		.where(and(eq(links.owner, session.user.id), isNull(links.deletedAt)))
 
 	const deviceMap = new Map<string, number>()
 
 	for (const row of rawUserAgents) {
 		const { dev, isBot } = getDeviceFromUA(row.userAgent)
 
-		if (isBot) continue
-
-		deviceMap.set(dev, (deviceMap.get(dev) ?? 0) + 1)
+		// bots stay in as their own row so this table adds up to Total Clicks
+		const key = isBot ? "Bot" : dev
+		deviceMap.set(key, (deviceMap.get(key) ?? 0) + 1)
 	}
 
 	const topDevices = Array.from(deviceMap.entries())
@@ -72,9 +72,9 @@ export default async function DashboardHome() {
 					<div className="flex items-center justify-between mb-6">
 						<div>
 							<div className="flex items-center gap-3 mb-2">
-								<h1 className="text-3xl md:text-4xl font-bold tracking-tight">Your Links</h1>
+								<h1 className="text-3xl md:text-4xl font-bold tracking-tight">Overview</h1>
 							</div>
-							<p className="text-base md:text-xl text-muted-foreground">Manage your links</p>
+							<p className="text-base md:text-xl text-muted-foreground">How your links are doing</p>
 						</div>
 					</div>
 
@@ -96,8 +96,8 @@ export default async function DashboardHome() {
 						<Card>
 							<CardContent className="p-4">
 								<div className="flex items-center gap-3">
-									<div className="p-2 bg-green-100 rounded-lg">
-										<BarChart3 className="h-4 w-4 text-green-600" />
+									<div className="p-2 bg-green-100 dark:bg-green-950 rounded-lg">
+										<BarChart3 className="h-4 w-4 text-green-600 dark:text-green-400" />
 									</div>
 									<div>
 										<p className="text-sm text-muted-foreground">Total Clicks</p>

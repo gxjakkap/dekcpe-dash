@@ -13,6 +13,7 @@ import {
 	type VisibilityState,
 } from "@tanstack/react-table"
 import { ChevronDown, Pencil, Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
 import * as React from "react"
 import { toast } from "sonner"
 import { deleteUser, updateUser } from "@/app/d/a/users/actions"
@@ -154,20 +155,23 @@ const ActionCell = ({ row }: { row: Row<UserColumn> }) => {
 	const [isEditOpen, setIsEditOpen] = React.useState(false)
 	const [isDeleteOpen, setIsDeleteOpen] = React.useState(false)
 	const [isPending, startTransition] = React.useTransition()
+	const router = useRouter()
 	const data = row.original
 
 	const handleUpdate = async (data: Partial<UserColumn>) => {
 		startTransition(async () => {
 			try {
-				await updateUser({
+				const [, err] = await updateUser({
 					id: data.id as string,
 					data: {
 						...data,
 						role: data.role as ROLES,
 					},
 				})
+				if (err) throw err
 				toast("Record updated succesfully")
 				setIsEditOpen(false)
+				router.refresh()
 			} catch (error) {
 				toast("Failed to update record")
 				console.error(error)
@@ -178,11 +182,13 @@ const ActionCell = ({ row }: { row: Row<UserColumn> }) => {
 	const handleDelete = async () => {
 		startTransition(async () => {
 			try {
-				await deleteUser({
+				const [, err] = await deleteUser({
 					id: data.id,
 				})
+				if (err) throw err
 				toast("Record deleted succesfully")
 				setIsDeleteOpen(false)
+				router.refresh()
 			} catch (error) {
 				toast("Failed to delete record")
 				console.error(error)
@@ -195,6 +201,7 @@ const ActionCell = ({ row }: { row: Row<UserColumn> }) => {
 			<Button
 				variant="ghost"
 				size="icon"
+				aria-label={`Edit ${data.name}`}
 				onClick={() => setIsEditOpen(true)}
 				className="h-8 w-8 p-0"
 				disabled={isPending}>
@@ -203,6 +210,7 @@ const ActionCell = ({ row }: { row: Row<UserColumn> }) => {
 			<Button
 				variant="ghost"
 				size="icon"
+				aria-label={`Delete ${data.name}`}
 				onClick={() => setIsDeleteOpen(true)}
 				className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
 				disabled={isPending}>

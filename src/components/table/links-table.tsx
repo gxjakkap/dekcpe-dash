@@ -2,6 +2,8 @@
 
 import type { ColumnDef } from "@tanstack/react-table"
 import { Copy, ExternalLink } from "lucide-react"
+import Link from "next/link"
+import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { InitialStateTablePage } from "@/types"
@@ -44,18 +46,22 @@ export function LinksTable(props: LinksTableProps) {
 					.replace("http://", "")
 				return (
 					<div className="flex items-center gap-2 w-full">
-						<code className="bg-muted px-2 py-1 rounded text-sm font-mono truncate flex-1 whitespace-nowrap">
+						<Link
+							href={`/d/link/${row.getValue("slug")}`}
+							onClick={(e) => e.stopPropagation()}
+							className="bg-muted px-2 py-1 rounded text-sm font-mono truncate flex-1 whitespace-nowrap hover:underline">
 							{shortUrl}
-						</code>
+						</Link>
 						<Button
 							variant="ghost"
-							size="sm"
-							className="h-6 w-6 p-0"
+							size="icon"
+							aria-label="Copy short link"
 							onClick={(e) => {
 								e.stopPropagation()
 								navigator.clipboard.writeText(`https://${shortUrl}`)
+								toast(`Link ${shortUrl} copied to clipboard!`)
 							}}>
-							<Copy className="h-3 w-3" />
+							<Copy className="h-4 w-4" />
 						</Button>
 					</div>
 				)

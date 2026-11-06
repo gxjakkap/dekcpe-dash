@@ -21,6 +21,7 @@ import {
 import { Button } from "./ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form"
 import { Input } from "./ui/input"
+import { Label } from "./ui/label"
 import { Switch } from "./ui/switch"
 
 const formSchema = z.object({
@@ -104,8 +105,8 @@ export default function CreateLinkForm() {
 							)}
 						/>
 						<div className="flex gap-x-2 items-center">
-							<span>Generate a QR Code for this link</span>
-							<Switch checked={genQr} onCheckedChange={() => setGenQr(!genQr)} />
+							<Label htmlFor="gen-qr">Generate a QR Code for this link</Label>
+							<Switch id="gen-qr" checked={genQr} onCheckedChange={() => setGenQr(!genQr)} />
 						</div>
 						<Button type="submit">
 							<Link /> Create Link
@@ -131,7 +132,7 @@ export default function CreateLinkForm() {
 									className="underline text-blue-600 hover:text-sky-500 text-center"
 									href={`https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${shortLink}?utm_source=dekcpe-qr`}
 									target="_blank"
-									rel="noopener, noreferer"
+									rel="noopener noreferer"
 									download>
 									Click here to download QR Code file
 								</a>

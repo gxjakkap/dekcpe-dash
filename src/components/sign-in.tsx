@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { signIn } from "@/lib/auth-client"
 import { cn } from "@/lib/utils"
-import { AnimatedGradientText } from "./magicui/animated-gradient-text"
 
 export default function SignIn() {
 	const [loading, setLoading] = useState(false)
@@ -15,8 +14,7 @@ export default function SignIn() {
 			<CardHeader>
 				<CardTitle className="text-lg md:text-xl">Sign In</CardTitle>
 				<CardDescription className="text-xs md:text-sm">
-					With your KMUTT account to access{" "}
-					<AnimatedGradientText className="font-bold">dekcpe.link</AnimatedGradientText>
+					With your KMUTT account to access <span className="font-bold text-primary">dekcpe.link</span>
 				</CardDescription>
 			</CardHeader>
 			<CardContent>

@@ -1,16 +1,8 @@
-import {
-	ChartNoAxesCombined,
-	ChevronUp,
-	Home,
-	LinkIcon,
-	LogOut,
-	Plus,
-	Send,
-	Unlink,
-	User2,
-	Users,
-} from "lucide-react"
+"use client"
+
+import { ChevronUp, Home, LinkIcon, LogOut, Plus, Send, Unlink, User2, Users } from "lucide-react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import {
 	Sidebar,
 	SidebarContent,
@@ -27,7 +19,15 @@ import { authClient } from "@/lib/auth-client"
 import { Button } from "./ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 
-const items = [
+interface NavItem {
+	title: string
+	url: string
+	icon: typeof Home
+	// active for every path under this prefix, not just `url` itself
+	match?: string
+}
+
+export const items: NavItem[] = [
 	{
 		title: "Home",
 		url: "/d",
@@ -37,10 +37,11 @@ const items = [
 		title: "Links",
 		url: "/d/links",
 		icon: LinkIcon,
+		match: "/d/link",
 	},
 ]
 
-const adminItems = [
+export const adminItems: NavItem[] = [
 	{
 		title: "Manage Users",
 		url: "/d/a/users",
@@ -53,15 +54,13 @@ const adminItems = [
 	},
 	{
 		title: "Manage All Links",
-		url: "/d/a/all ",
+		url: "/d/a/all",
 		icon: Unlink,
 	},
-	{
-		title: "View All Analytics",
-		url: "/d/a/clicks",
-		icon: ChartNoAxesCombined,
-	},
 ]
+
+export const isItemActive = (item: NavItem, pathname: string) =>
+	item.match ? pathname.startsWith(item.match) : pathname === item.url
 
 interface DashboardSidebarProps {
 	isAdmin: boolean
@@ -69,6 +68,7 @@ interface DashboardSidebarProps {
 }
 
 export function DashboardSidebar({ isAdmin, name }: DashboardSidebarProps) {
+	const pathname = usePathname()
 	return (
 		<Sidebar className="pt-8">
 			<SidebarHeader className="flex items-center justify-between">
@@ -79,20 +79,18 @@ export function DashboardSidebar({ isAdmin, name }: DashboardSidebarProps) {
 					<SidebarGroupLabel>Hi, {name}!</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							<Link href={"/d/links/create"}>
-								<div className="flex w-full mx-auto my-2">
-									<Button className="w-full">
-										<Plus /> Create New Link
-									</Button>
-								</div>
-							</Link>
+							<Button className="w-full my-2" asChild>
+								<Link href={"/d/links/create"}>
+									<Plus /> Create New Link
+								</Link>
+							</Button>
 							{items.map((item) => (
 								<SidebarMenuItem key={item.title}>
-									<SidebarMenuButton asChild>
-										<a href={item.url}>
+									<SidebarMenuButton asChild isActive={isItemActive(item, pathname)}>
+										<Link href={item.url}>
 											<item.icon />
 											<span>{item.title}</span>
-										</a>
+										</Link>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 							))}
@@ -106,11 +104,11 @@ export function DashboardSidebar({ isAdmin, name }: DashboardSidebarProps) {
 							<SidebarMenu>
 								{adminItems.map((item) => (
 									<SidebarMenuItem key={item.title}>
-										<SidebarMenuButton asChild>
-											<a href={item.url}>
+										<SidebarMenuButton asChild isActive={isItemActive(item, pathname)}>
+											<Link href={item.url}>
 												<item.icon />
 												<span>{item.title}</span>
-											</a>
+											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 								))}
@@ -129,9 +127,9 @@ export function DashboardSidebar({ isAdmin, name }: DashboardSidebarProps) {
 									<ChevronUp className="ml-auto" />
 								</SidebarMenuButton>
 							</DropdownMenuTrigger>
-							<DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width] z-50">
+							<DropdownMenuContent side="top" className="w-(--radix-popper-anchor-width) z-50">
 								<DropdownMenuItem
-									className="flex spaxe-x-2"
+									className="flex space-x-2"
 									onClick={() => {
 										authClient.signOut({
 											fetchOptions: {
