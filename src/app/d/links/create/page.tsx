@@ -1,17 +1,9 @@
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
-import CreateLinkForm from "@/components/create-links"
 import { Card } from "@/components/ui/card"
-import { auth } from "@/lib/auth"
+import { requireUser } from "@/lib/session"
+import CreateLinkForm from "./create-link-form"
 
 export default async function CreateLinkPage() {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	})
-
-	if (!session) {
-		redirect("/sign-in")
-	}
+	await requireUser()
 
 	return (
 		<div className="flex flex-col w-full pt-4">

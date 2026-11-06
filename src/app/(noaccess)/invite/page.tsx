@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { RedeemForm } from "@/components/invite-redeem"
+import { RedeemForm } from "./redeem-form"
 
 export const metadata: Metadata = {
 	title: "redeem invite | dekcpe.link",

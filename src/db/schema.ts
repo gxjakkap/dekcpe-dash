@@ -22,11 +22,12 @@ export const clicks = pgTable("clicks", {
 	userAgent: text("user_agent").notNull(),
 	utmSource: text("utm_source"),
 	timestamp: timestamp("timestamp", { withTimezone: true }).defaultNow().notNull(),
+	// written by the dekcpe.link redirect server (Go struct without json tags, so keys are capitalized)
 	geolocation: jsonb("geolocation").$type<{
-		country: string
-		region: string
-		city: string
-		timezone: string
+		Country: string
+		Region: string
+		City: string
+		Timezone: string
 	}>(),
 })
 

@@ -3,38 +3,30 @@
 import { eq } from "drizzle-orm"
 import z from "zod"
 import { db } from "@/db"
+import { getOwnedLink } from "@/db/links"
 import { links } from "@/db/schema"
-import { ROLES } from "@/lib/const"
 import { CustomError } from "@/lib/errors"
-import { authorizedProcedure } from "@/lib/server-actions"
+import { destinationSchema } from "@/lib/links"
+import { userProcedure } from "@/lib/server-actions"
 
-export const deleteShortLink = authorizedProcedure
+async function requireOwnedLink(slug: string, userId: string) {
+	const link = await getOwnedLink(slug, userId)
+	if (!link) throw new CustomError("LinkNotFoundError", "This link does not exist or has been deleted.")
+	return link
+}
+
+export const editShortLink = userProcedure
 	.createServerAction()
-	.input(
-		z.object({
-			slug: z.string(),
-		})
-	)
+	.input(z.object({ slug: z.string(), url: destinationSchema }))
 	.handler(async ({ input, ctx }) => {
-		const { slug } = input
+		const link = await requireOwnedLink(input.slug, ctx.session.user.id)
+		await db.update(links).set({ url: input.url, updatedAt: new Date() }).where(eq(links.id, link.id))
+	})
 
-		const [link] = await db.select().from(links).where(eq(links.slug, slug)).limit(1)
-		if (!link) throw new CustomError("LinkNotFoundError", "This link does not exist or has been deleted.")
-		if (link.owner !== ctx.session.user.id && ctx.session.user.role !== ROLES.ADMIN) {
-			throw new CustomError("UnauthorizedError", "You are not authorized to delete this link.")
-		}
-		if (link.deletedAt) {
-			throw new CustomError("LinkNotExistedError", "This link does not exist or has already been deleted.")
-		}
-
-		await db
-			.update(links)
-			.set({
-				deletedAt: new Date(),
-			})
-			.where(eq(links.slug, slug))
-
-		return {
-			status: 200,
-		}
+export const deleteShortLink = userProcedure
+	.createServerAction()
+	.input(z.object({ slug: z.string() }))
+	.handler(async ({ input, ctx }) => {
+		const link = await requireOwnedLink(input.slug, ctx.session.user.id)
+		await db.update(links).set({ deletedAt: new Date() }).where(eq(links.id, link.id))
 	})

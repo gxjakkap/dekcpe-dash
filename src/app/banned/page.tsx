@@ -1,21 +1,14 @@
 import type { Metadata } from "next"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 
 import SignOut from "@/components/sign-out"
-import { auth } from "@/lib/auth"
+import { requireUser } from "@/lib/session"
 
 export const metadata: Metadata = {
 	title: "account suspended | dekcpe.link",
 }
 
 export default async function BannedPage() {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	})
-
-	if (!session) redirect("/sign-in")
-	if (!session.user.banned) redirect("/d")
+	const session = await requireUser(["banned"])
 
 	return (
 		<main className="flex min-h-screen items-center justify-center px-4">

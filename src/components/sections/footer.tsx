@@ -19,14 +19,9 @@ const FOOTER_COLUMNS = [
 	},
 ]
 
-const FOOTER_POLICIES: { text: string; href: string }[] = [
-	/** { text: "Privacy Policy", href: "https://www.launchuicomponents.com/" },
-	{ text: "Terms of Service", href: "https://www.launchuicomponents.com/" }, **/
-]
-
-export default function FooterSection({ className }: { className?: string }) {
+export default function FooterSection() {
 	return (
-		<footer className={cn("w-full bg-paper-2", className)}>
+		<footer className="w-full bg-paper-2">
 			<div className="max-w-container mx-auto flex flex-col gap-16 px-4 pt-24 pb-8 md:px-16">
 				<div className="grid gap-12 md:grid-cols-12">
 					<p className="font-display text-section leading-[1.02] tracking-[var(--tracking-display)] md:col-span-6">
@@ -49,18 +44,7 @@ export default function FooterSection({ className }: { className?: string }) {
 						</div>
 					))}
 				</div>
-				<div className="flex flex-col items-start justify-between gap-4 border-t pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center">
-					<p>© {new Date().getFullYear()} CPE KMUTT Student</p>
-					{FOOTER_POLICIES.length > 0 && (
-						<div className="flex items-center gap-4">
-							{FOOTER_POLICIES.map((policy) => (
-								<a key={policy.href} href={policy.href}>
-									{policy.text}
-								</a>
-							))}
-						</div>
-					)}
-				</div>
+				<p className="border-t pt-6 text-sm text-muted-foreground">© {new Date().getFullYear()} CPE KMUTT Student</p>
 			</div>
 		</footer>
 	)

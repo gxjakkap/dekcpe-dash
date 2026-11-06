@@ -1,7 +1,5 @@
-import { headers } from "next/headers"
 import { createServerActionProcedure } from "zsa"
-import { auth } from "@/lib/auth"
-import { ROLES } from "./const"
+import { type Access, accessOf, getSession } from "@/lib/session"
 import { AuthenticationError, ForbiddenError, PublicError } from "./errors"
 
 /**
@@ -10,56 +8,33 @@ import { AuthenticationError, ForbiddenError, PublicError } from "./errors"
  * Original author: beambeambeam
  */
 // biome-ignore lint: <already guarded with isAllowedError>
-export function shapeErrors({ err }: any) {
+function shapeErrors({ err }: any) {
 	const isAllowedError = err instanceof PublicError
 	const isDev = process.env.NODE_ENV === "development"
-	if (err instanceof PublicError || isDev) {
+	if (isAllowedError || isDev) {
 		console.error(err)
 		return {
 			// CustomError has no code; its name (e.g. SlugAlreadyExistedError) lets the client react to it
 			code: err.code ?? (isAllowedError ? err.name : "ERROR"),
 			message: `${!isAllowedError && isDev ? "[DEV] " : ""}${err.message}`,
 		}
-	} else {
-		return {
-			code: "ERROR",
-			message: "Something went wrong",
-		}
+	}
+	return {
+		code: "ERROR",
+		message: "Something went wrong",
 	}
 }
 
-export const authedProcedure = createServerActionProcedure()
-	.experimental_shapeError(shapeErrors)
-	.handler(async () => {
-		const session = await auth.api.getSession({
-			headers: await headers(),
+const procedureFor = (allowed: Access[]) =>
+	createServerActionProcedure()
+		.experimental_shapeError(shapeErrors)
+		.handler(async () => {
+			const session = await getSession()
+			if (!session) throw new AuthenticationError()
+			if (!allowed.includes(accessOf(session.user))) throw new ForbiddenError()
+			return { session }
 		})
 
-		if (!session) throw new AuthenticationError()
-
-		return {
-			session,
-		}
-	})
-
-export const authorizedProcedure = createServerActionProcedure(authedProcedure)
-	.experimental_shapeError(shapeErrors)
-	.handler(async ({ ctx }) => {
-		if (ctx.session.user.role === ROLES.UNAUTHORIZED) throw new ForbiddenError()
-
-		return {
-			session: ctx.session,
-		}
-	})
-
-export const adminProcedure = createServerActionProcedure(authedProcedure)
-	.experimental_shapeError(shapeErrors)
-	.handler(async ({ ctx }) => {
-		const isAdmin = ctx.session?.user.role === ROLES.ADMIN
-
-		if (!isAdmin) throw new ForbiddenError()
-
-		return {
-			session: ctx.session,
-		}
-	})
+export const authedProcedure = procedureFor(["no-access", "user", "admin"])
+export const userProcedure = procedureFor(["user", "admin"])
+export const adminProcedure = procedureFor(["admin"])

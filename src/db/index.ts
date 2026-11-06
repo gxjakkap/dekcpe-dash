@@ -1,7 +1,5 @@
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
+import { databaseUrl } from "./url"
 
-const connectionString = `postgres://${process.env.PG_USER ?? "postgres"}:${process.env.PG_PASSWORD ?? ""}@${process.env.PG_HOST ?? "localhost"}:${process.env.PG_PORT ?? "5432"}/${process.env.PG_DBNAME ?? "postgres"}`
-const pool = postgres(connectionString, { max: 1 })
-
-export const db = drizzle(pool)
+export const db = drizzle(postgres(databaseUrl(), { max: 1 }))

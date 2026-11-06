@@ -1,22 +1,13 @@
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
-
 import FooterSection from "@/components/sections/footer"
 import Navbar from "@/components/sections/navbar"
-import { auth } from "@/lib/auth"
+import { requireAccess } from "@/lib/session"
 
 export default async function LandingLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	})
-
-	if (session) {
-		redirect("/d")
-	}
+	await requireAccess(["signed-out"])
 
 	return (
 		<>
-			<Navbar showNavigation={false} />
+			<Navbar />
 			{children}
 			<FooterSection />
 		</>
