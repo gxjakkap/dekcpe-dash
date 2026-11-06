@@ -22,6 +22,9 @@ export const auth = betterAuth({
 			verification,
 		},
 	}),
+	// better-auth 1.7 keys microsoft accounts by `oid` (1.2 used `sub`) and no longer assumes emailVerified,
+	// so existing users need implicit linking by email. Safe only because tenantId pins a single Entra tenant.
+	account: { accountLinking: { trustedProviders: ["microsoft"] } },
 	socialProviders: {
 		microsoft: {
 			clientId: process.env.AUTH_MSFT_ID!,
