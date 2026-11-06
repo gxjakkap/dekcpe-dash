@@ -63,7 +63,7 @@ export default function CreateLinkForm() {
 	}
 
 	if (shortLink) {
-		const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${shortLink}?utm_source=dekcpe-qr`
+		const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${encodeURIComponent(`${shortLink}?utm_source=dekcpe-qr`)}`
 		return (
 			<div className="flex flex-col items-center gap-6 py-4 text-center">
 				<div className="flex flex-col gap-2">
@@ -79,6 +79,8 @@ export default function CreateLinkForm() {
 							alt={`QR code for ${stripProtocol(shortLink)}`}
 							width={240}
 							height={240}
+							// loaded straight from qrserver: resizing a QR code gains nothing, and the optimizer would need the host allowlisted
+							unoptimized
 							className="rounded-md border bg-white p-2"
 						/>
 						<Button variant="ghost" size="sm" asChild>
