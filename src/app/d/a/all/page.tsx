@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm"
+import { desc, eq } from "drizzle-orm"
 import { LinkIcon } from "lucide-react"
 import { type AdminLinksColumn, AdminLinksTable } from "@/components/table/admin-links-table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,6 +18,7 @@ export default async function AdminLinksPage() {
 		})
 		.from(links)
 		.leftJoin(user, eq(links.owner, user.id))
+		.orderBy(desc(links.createdAt))
 
 	const linksData: AdminLinksColumn[] = usersLinks.map((link) => ({
 		id: link.id.toString(),
