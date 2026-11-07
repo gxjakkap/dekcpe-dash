@@ -16,7 +16,8 @@ export function DashboardPage({ title, description, action, stats, className, ch
 	return (
 		<div className={cn("container mx-auto max-w-7xl px-4 py-8", className)}>
 			<div className="mb-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-				<div className="min-w-0">
+				{/* max-w-full: in the mobile column layout this div sizes to its content, so a long title/description would push past the screen */}
+				<div className="min-w-0 max-w-full">
 					<h1 className="mb-2 text-3xl font-bold tracking-tight md:text-4xl">{title}</h1>
 					{description && <p className="text-base text-muted-foreground md:text-xl">{description}</p>}
 				</div>
