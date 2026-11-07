@@ -1,3 +1,7 @@
+import { eq, type SQL } from "drizzle-orm"
+import { db } from "@/db"
+import { clicks, links } from "@/db/schema"
+
 export function deviceFromUserAgent(ua: string): string {
 	if (ua.includes("iPhone")) {
 		return "iPhone"
@@ -69,4 +73,22 @@ export function deviceFromUserAgent(ua: string): string {
 	}
 
 	return "Other"
+}
+
+export async function topDevices(where: SQL | undefined, limit = 10) {
+	const rows = await db
+		.select({ userAgent: clicks.userAgent })
+		.from(clicks)
+		.innerJoin(links, eq(clicks.linkId, links.id))
+		.where(where)
+
+	const counts = new Map<string, number>()
+	for (const { userAgent } of rows) {
+		const device = deviceFromUserAgent(userAgent)
+		counts.set(device, (counts.get(device) ?? 0) + 1)
+	}
+	return [...counts]
+		.sort((a, b) => b[1] - a[1])
+		.slice(0, limit)
+		.map(([name, count]) => ({ name, count }))
 }

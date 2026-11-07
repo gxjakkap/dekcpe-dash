@@ -7,7 +7,7 @@ export function QuickAnalyticsTable({ label, rows }: { label: string; rows: { na
 				<TableHeader>
 					<TableRow className="bg-muted/50">
 						<TableHead className="h-9 py-2">{label}</TableHead>
-						<TableHead className="h-9 py-2">Clicks</TableHead>
+						<TableHead className="h-9 py-2 text-right">Clicks</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
@@ -21,7 +21,7 @@ export function QuickAnalyticsTable({ label, rows }: { label: string; rows: { na
 					{rows.map((x) => (
 						<TableRow key={x.name}>
 							<TableCell className="py-2 font-medium">{x.name}</TableCell>
-							<TableCell className="py-2">{x.count}</TableCell>
+							<TableCell className="py-2 text-right tabular-nums">{x.count}</TableCell>
 						</TableRow>
 					))}
 				</TableBody>

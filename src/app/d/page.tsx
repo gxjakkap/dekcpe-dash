@@ -1,15 +1,14 @@
 import { flag } from "country-emoji"
-import { count, countDistinct, desc, eq, sql } from "drizzle-orm"
+import { count, countDistinct, desc, eq } from "drizzle-orm"
 import { BarChart3, ChartLine, LinkIcon } from "lucide-react"
 import { DashboardPage, SectionCard, StatCard } from "@/components/dashboard-page"
 import { db } from "@/db"
+import { clickCountry as country } from "@/db/clicks"
 import { ownLiveLinks } from "@/db/links"
 import { clicks, links } from "@/db/schema"
 import { requireUser } from "@/lib/session"
-import { deviceFromUserAgent } from "./device"
+import { topDevices } from "./device"
 import { QuickAnalyticsTable } from "./quick-analytics-table"
-
-const country = sql<string>`COALESCE(NULLIF(${clicks.geolocation}->>'Country', ''), 'Unknown')`
 
 export default async function DashboardHome() {
 	const session = await requireUser()
@@ -30,21 +29,7 @@ export default async function DashboardHome() {
 		.orderBy(desc(count()))
 		.limit(10)
 
-	const userAgents = await db
-		.select({ userAgent: clicks.userAgent })
-		.from(clicks)
-		.innerJoin(links, eq(clicks.linkId, links.id))
-		.where(mine)
-
-	const deviceCounts = new Map<string, number>()
-	for (const { userAgent } of userAgents) {
-		const device = deviceFromUserAgent(userAgent)
-		deviceCounts.set(device, (deviceCounts.get(device) ?? 0) + 1)
-	}
-	const topDevices = [...deviceCounts]
-		.sort((a, b) => b[1] - a[1])
-		.slice(0, 10)
-		.map(([name, count]) => ({ name, count }))
+	const devices = await topDevices(mine)
 
 	return (
 		<DashboardPage
@@ -62,7 +47,7 @@ export default async function DashboardHome() {
 						label="Country"
 						rows={topCountries.map((x) => ({ name: `${flag(x.country) ?? ""} ${x.country}`, count: x.count }))}
 					/>
-					<QuickAnalyticsTable label="Device" rows={topDevices} />
+					<QuickAnalyticsTable label="Device" rows={devices} />
 				</div>
 			</SectionCard>
 		</DashboardPage>
