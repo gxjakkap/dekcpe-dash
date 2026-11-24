@@ -44,6 +44,12 @@ export const adminItems: NavItem[] = [
 		url: "/d/a/all",
 		icon: Unlink,
 	},
+	{
+		title: "Groups",
+		url: "/d/a/groups",
+		icon: UsersRound,
+		match: "/d/a/groups",
+	},
 ]
 
 export const isItemActive = (item: NavItem, pathname: string) =>
