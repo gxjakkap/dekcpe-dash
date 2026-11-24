@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm"
+import { asc, desc, eq, isNull } from "drizzle-orm"
 import { LinkIcon } from "lucide-react"
 import { DashboardPage, SectionCard, StatCard } from "@/components/dashboard-page"
 import { db } from "@/db"
@@ -14,7 +14,13 @@ export default async function AdminLinksPage() {
 		.from(links)
 		.innerJoin(groups, eq(groups.id, links.groupId))
 		.leftJoin(user, eq(links.createdBy, user.id))
+		.where(isNull(links.deletedAt))
 		.orderBy(desc(links.createdAt))
+	const liveGroups = await db
+		.select({ id: groups.id, name: groups.name })
+		.from(groups)
+		.where(isNull(groups.deletedAt))
+		.orderBy(asc(groups.name))
 
 	return (
 		<DashboardPage
@@ -22,7 +28,7 @@ export default async function AdminLinksPage() {
 			description="Every link, from every user"
 			stats={<StatCard icon={LinkIcon} label="Total Links" value={allLinks.length} />}>
 			<SectionCard icon={LinkIcon} title="All Links">
-				<AdminLinksTable data={allLinks} />
+				<AdminLinksTable data={allLinks} groups={liveGroups} />
 			</SectionCard>
 		</DashboardPage>
 	)

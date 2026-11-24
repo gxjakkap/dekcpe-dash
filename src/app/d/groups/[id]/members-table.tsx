@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import type { ColumnDef } from "@tanstack/react-table"
 import { CrownIcon, UserMinusIcon, UserPlusIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -13,7 +13,8 @@ import { DataTable } from "@/components/data-table"
 import { DeleteDialog } from "@/components/delete-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { formatDate } from "@/lib/utils"
 import { addMemberAction, removeMemberAction, transferOwnershipAction } from "../actions"
@@ -29,7 +30,8 @@ interface MemberRow {
 
 const emailSchema = z.object({ email: z.string().trim().min(1, { message: "Enter an email." }) })
 
-function AddMemberForm({ groupId }: { groupId: number }) {
+function AddMemberDialog({ groupId }: { groupId: number }) {
+	const [open, setOpen] = useState(false)
 	const { execute, isPending } = useServerAction(addMemberAction)
 	const router = useRouter()
 	const form = useForm<z.infer<typeof emailSchema>>({
@@ -45,29 +47,53 @@ function AddMemberForm({ groupId }: { groupId: number }) {
 		}
 		toast.success("Member added")
 		form.reset()
+		setOpen(false)
 		router.refresh()
 	}
 
 	return (
-		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-x-2">
-				<FormField
-					control={form.control}
-					name="email"
-					render={({ field }) => (
-						<FormItem>
-							<FormControl>
-								<Input type="email" placeholder="Member's email" aria-label="Member's email" {...field} />
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<Button type="submit" disabled={isPending}>
-					<UserPlusIcon /> {isPending ? "Adding…" : "Add Member"}
+		<Dialog
+			open={open}
+			onOpenChange={(o) => {
+				setOpen(o)
+				if (!o) form.reset()
+			}}>
+			<DialogTrigger asChild>
+				<Button>
+					<UserPlusIcon /> Add Member
 				</Button>
-			</form>
-		</Form>
+			</DialogTrigger>
+			<DialogContent className="sm:max-w-md">
+				<DialogHeader>
+					<DialogTitle>Add Member</DialogTitle>
+				</DialogHeader>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)}>
+						<FormField
+							control={form.control}
+							name="email"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Email</FormLabel>
+									<FormControl>
+										<Input type="email" placeholder="Member's email" className="mt-1" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<DialogFooter className="mt-4 flex justify-end space-x-2">
+							<Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
+								Cancel
+							</Button>
+							<Button type="submit" disabled={isPending}>
+								{isPending ? "Adding…" : "Add Member"}
+							</Button>
+						</DialogFooter>
+					</form>
+				</Form>
+			</DialogContent>
+		</Dialog>
 	)
 }
 
@@ -159,7 +185,7 @@ export function MembersTable({
 			paramPrefix="members"
 			columns={columns}
 			data={data}
-			toolbar={controls === "owner" ? <AddMemberForm groupId={groupId} /> : undefined}
+			toolbar={controls === "owner" ? <AddMemberDialog groupId={groupId} /> : undefined}
 		/>
 	)
 }

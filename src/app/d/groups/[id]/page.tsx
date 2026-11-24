@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { getMembership } from "@/db/groups"
+import { getMembership, userGroups } from "@/db/groups"
 import { requireUser } from "@/lib/session"
 import { GroupDetail } from "./group-detail"
 
@@ -12,5 +12,6 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
 	const membership = await getMembership(groupId, session.user.id)
 	if (!membership) notFound()
 
-	return <GroupDetail groupId={groupId} controls={membership.isOwner ? "owner" : "member"} />
+	const moveTargets = (await userGroups(session.user.id)).filter((g) => g.id !== groupId)
+	return <GroupDetail groupId={groupId} controls={membership.isOwner ? "owner" : "member"} moveTargets={moveTargets} />
 }

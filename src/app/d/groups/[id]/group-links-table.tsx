@@ -1,8 +1,10 @@
 "use client"
 
+import { BulkLinkActions } from "@/components/bulk-link-actions"
 import { DataTable } from "@/components/data-table"
 import { linkColumns } from "@/components/link-columns"
 import { Badge } from "@/components/ui/badge"
+import { bulkDeleteLinks, bulkMoveLinks } from "../../links/bulk-actions"
 
 interface Row {
 	slug: string
@@ -29,11 +31,36 @@ const columns = (linkable: boolean) =>
 		],
 	})
 
-export function GroupLinksTable({ data, linkable }: { data: Row[]; linkable: boolean }) {
+export function GroupLinksTable({
+	data,
+	linkable,
+	moveTargets,
+	bulk = false,
+}: {
+	data: Row[]
+	linkable: boolean
+	moveTargets: { id: number; name: string }[]
+	/** show row selection with move/delete */
+	bulk?: boolean
+}) {
 	return (
 		<DataTable
 			columns={columns(linkable)}
 			data={data}
+			getRowId={(row) => row.slug}
+			bulkActions={
+				bulk
+					? (selected, clear) => (
+							<BulkLinkActions
+								slugs={selected.map((r) => r.slug)}
+								targets={moveTargets}
+								move={bulkMoveLinks}
+								remove={bulkDeleteLinks}
+								clear={clear}
+							/>
+						)
+					: undefined
+			}
 			rowHref={linkable ? (row) => `/d/link/${row.slug}` : undefined}
 			emptyState="No links in this group."
 		/>

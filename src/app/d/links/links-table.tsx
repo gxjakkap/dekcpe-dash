@@ -2,11 +2,13 @@
 
 import Link from "next/link"
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs"
+import { BulkLinkActions } from "@/components/bulk-link-actions"
 import { DataTable } from "@/components/data-table"
 import { linkColumns } from "@/components/link-columns"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { bulkDeleteLinks, bulkMoveLinks } from "./bulk-actions"
 
 interface LinksRow {
 	slug: string
@@ -68,6 +70,16 @@ export function LinksTable({ data, groups }: { data: LinksRow[]; groups: { id: n
 			}
 			columns={columns}
 			data={data}
+			getRowId={(row) => row.slug}
+			bulkActions={(selected, clear) => (
+				<BulkLinkActions
+					slugs={selected.map((r) => r.slug)}
+					targets={groups}
+					move={bulkMoveLinks}
+					remove={bulkDeleteLinks}
+					clear={clear}
+				/>
+			)}
 			rowHref={(row) => detailHref(row.slug)}
 			emptyState={
 				<div className="flex flex-col items-center gap-3 font-normal">

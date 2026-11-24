@@ -12,7 +12,16 @@ import { MembersTable } from "./members-table"
 export type GroupControls = "owner" | "member" | "none"
 
 /** a group's members and links; `controls` decides what the viewer may do (the caller has already authorised the view) */
-export async function GroupDetail({ groupId, controls }: { groupId: number; controls: GroupControls }) {
+export async function GroupDetail({
+	groupId,
+	controls,
+	moveTargets = [],
+}: {
+	groupId: number
+	controls: GroupControls
+	/** groups the viewer can move this group's links to */
+	moveTargets?: { id: number; name: string }[]
+}) {
 	const [group] = await db.select().from(groups).where(eq(groups.id, groupId))
 	if (!group) notFound()
 
@@ -66,7 +75,12 @@ export async function GroupDetail({ groupId, controls }: { groupId: number; cont
 					<MembersTable data={members} groupId={groupId} controls={controls} />
 				</SectionCard>
 				<SectionCard icon={LinkIcon} title="Links">
-					<GroupLinksTable data={groupLinks} linkable={controls !== "none"} />
+					<GroupLinksTable
+						data={groupLinks}
+						linkable={controls !== "none"}
+						bulk={controls !== "none" && !group.deletedAt}
+						moveTargets={moveTargets}
+					/>
 				</SectionCard>
 				{controls !== "none" && <GroupSettings groupId={groupId} name={group.name} controls={controls} />}
 			</div>

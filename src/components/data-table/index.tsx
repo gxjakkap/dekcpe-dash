@@ -14,13 +14,14 @@ import {
 	getFilteredRowModel,
 	getPaginationRowModel,
 	type PaginationState,
+	type RowSelectionState,
 	type Updater,
 	useReactTable,
 	type VisibilityState,
 } from "@tanstack/react-table"
 import { useRouter } from "next/navigation"
 import { parseAsInteger, useQueryState } from "nuqs"
-import { type ReactNode, useState } from "react"
+import { type ReactNode, useEffect, useMemo, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DataTableViewOptions } from "./column-toggle"
@@ -34,6 +35,9 @@ interface DataTableProps<TData, TValue> {
 	toolbar?: ReactNode
 	/** Namespaces the page/perPage URL params so several tables can share a page. */
 	paramPrefix?: string
+	/** Adds a checkbox column; rendered in the toolbar while rows are selected. Needs `getRowId`. */
+	bulkActions?: (selected: TData[], clear: () => void) => ReactNode
+	getRowId?: (row: TData) => string
 }
 
 const pageParam = parseAsInteger.withOptions({ history: "push", scroll: false, shallow: true })
@@ -45,6 +49,8 @@ export function DataTable<TData, TValue>({
 	emptyState = "No results.",
 	toolbar,
 	paramPrefix,
+	bulkActions,
+	getRowId,
 }: DataTableProps<TData, TValue>) {
 	const router = useRouter()
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -62,10 +68,49 @@ export function DataTable<TData, TValue>({
 		void setPerPage(next.pageSize)
 	}
 
+	const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+	// fresh data (e.g. after router.refresh()) drops the selection
+	// biome-ignore lint/correctness/useExhaustiveDependencies: data is the trigger
+	useEffect(() => setRowSelection({}), [data])
+
+	const allColumns = useMemo<ColumnDef<TData, TValue>[]>(
+		() =>
+			bulkActions
+				? [
+						{
+							id: "select",
+							enableHiding: false,
+							header: ({ table }) => (
+								<input
+									type="checkbox"
+									aria-label="Select all rows on this page"
+									className="size-4 cursor-pointer accent-primary"
+									checked={table.getIsAllPageRowsSelected()}
+									onChange={table.getToggleAllPageRowsSelectedHandler()}
+								/>
+							),
+							cell: ({ row }) => (
+								<input
+									type="checkbox"
+									aria-label="Select row"
+									className="size-4 cursor-pointer accent-primary"
+									checked={row.getIsSelected()}
+									onChange={row.getToggleSelectedHandler()}
+								/>
+							),
+						},
+						...columns,
+					]
+				: columns,
+		[columns, bulkActions]
+	)
+
 	const table = useReactTable({
 		data,
-		columns,
-		state: { columnVisibility, pagination },
+		columns: allColumns,
+		getRowId: getRowId ? (row) => getRowId(row) : undefined,
+		state: { columnVisibility, pagination, rowSelection },
+		onRowSelectionChange: setRowSelection,
 		onPaginationChange,
 		onColumnVisibilityChange: setColumnVisibility,
 		getCoreRowModel: getCoreRowModel(),
@@ -73,6 +118,8 @@ export function DataTable<TData, TValue>({
 		getPaginationRowModel: getPaginationRowModel(),
 		autoResetPageIndex: false,
 	})
+
+	const selected = bulkActions ? table.getFilteredSelectedRowModel().rows.map((r) => r.original) : []
 
 	return (
 		<div className="flex w-full flex-col gap-4">
@@ -86,6 +133,12 @@ export function DataTable<TData, TValue>({
 				/>
 				<DataTableViewOptions table={table} />
 				{toolbar}
+				{bulkActions && selected.length > 0 && (
+					<div className="ml-auto flex items-center gap-x-2">
+						<span className="text-sm text-muted-foreground">{selected.length} selected</span>
+						{bulkActions(selected, () => setRowSelection({}))}
+					</div>
+				)}
 			</div>
 			<div className="w-full rounded-sm border">
 				<Table>
@@ -114,7 +167,7 @@ export function DataTable<TData, TValue>({
 											? (e) => {
 													// links and buttons in the row, and dialogs portalled out of it, handle their own clicks
 													const target = e.target as Element
-													if (!e.currentTarget.contains(target) || target.closest("a, button")) return
+													if (!e.currentTarget.contains(target) || target.closest("a, button, input")) return
 													router.push(rowHref(row.original))
 												}
 											: undefined
@@ -128,7 +181,9 @@ export function DataTable<TData, TValue>({
 							))
 						) : (
 							<TableRow>
-								<TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
+								<TableCell
+									colSpan={table.getVisibleLeafColumns().length}
+									className="h-24 text-center text-muted-foreground">
 									{emptyState}
 								</TableCell>
 							</TableRow>
