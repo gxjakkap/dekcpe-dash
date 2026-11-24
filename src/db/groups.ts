@@ -1,4 +1,4 @@
-import { and, asc, eq, isNotNull, isNull, ne, sql } from "drizzle-orm"
+import { and, asc, eq, exists, isNotNull, isNull, ne, notExists, sql } from "drizzle-orm"
 import { db } from "@/db"
 import { groupMembers, groups, links, user } from "@/db/schema"
 import { CustomError } from "@/lib/errors"
@@ -42,15 +42,20 @@ export const createGroup = (name: string, ownerId: string) =>
 	})
 
 /** gives the user a group named after them, unless they already belong to one (even a deleted one) */
-export async function ensurePersonalGroup(userId: string) {
-	const [row] = await db
-		.select({ name: user.name, membership: groupMembers.groupId })
-		.from(user)
-		.leftJoin(groupMembers, eq(groupMembers.userId, user.id))
-		.where(eq(user.id, userId))
-		.limit(1)
-	if (row && row.membership === null) await createGroup(row.name, userId)
-}
+export const ensurePersonalGroup = (userId: string) =>
+	db.transaction(async (tx) => {
+		// the row lock serialises concurrent calls, so the check and the insert are atomic
+		const [row] = await tx.select({ name: user.name }).from(user).where(eq(user.id, userId)).for("update")
+		if (!row) return
+		const [member] = await tx
+			.select({ id: groupMembers.groupId })
+			.from(groupMembers)
+			.where(eq(groupMembers.userId, userId))
+			.limit(1)
+		if (member) return
+		const [group] = await tx.insert(groups).values({ name: row.name, ownerId: userId }).returning({ id: groups.id })
+		await tx.insert(groupMembers).values({ groupId: group.id, userId })
+	})
 
 export async function addMember(groupId: number, userId: string) {
 	const added = await db.insert(groupMembers).values({ groupId, userId }).onConflictDoNothing().returning()
@@ -58,6 +63,23 @@ export async function addMember(groupId: number, userId: string) {
 }
 
 export async function removeMember(groupId: number, userId: string) {
+	// one guarded statement: the owner's row is never deleted, even if ownership moves meanwhile
+	const removed = await db
+		.delete(groupMembers)
+		.where(
+			and(
+				eq(groupMembers.groupId, groupId),
+				eq(groupMembers.userId, userId),
+				notExists(
+					db
+						.select({ one: sql`1` })
+						.from(groups)
+						.where(and(eq(groups.id, groupId), eq(groups.ownerId, userId)))
+				)
+			)
+		)
+		.returning({ userId: groupMembers.userId })
+	if (removed.length > 0) return
 	const [group] = await db.select({ ownerId: groups.ownerId }).from(groups).where(eq(groups.id, groupId))
 	if (!group) throw groupNotFound()
 	if (group.ownerId === userId) {
@@ -66,16 +88,26 @@ export async function removeMember(groupId: number, userId: string) {
 			"The owner can't be removed. Transfer ownership or delete the group."
 		)
 	}
-	await db.delete(groupMembers).where(and(eq(groupMembers.groupId, groupId), eq(groupMembers.userId, userId)))
 }
 
 export async function transferOwnership(groupId: number, toUserId: string) {
-	const [member] = await db
-		.select()
-		.from(groupMembers)
-		.where(and(eq(groupMembers.groupId, groupId), eq(groupMembers.userId, toUserId)))
-	if (!member) throw new CustomError("NotAMemberError", "Ownership can only go to a member of the group.")
-	await db.update(groups).set({ ownerId: toUserId }).where(eq(groups.id, groupId))
+	// one guarded statement: only succeeds while the target still has a member row
+	const moved = await db
+		.update(groups)
+		.set({ ownerId: toUserId })
+		.where(
+			and(
+				eq(groups.id, groupId),
+				exists(
+					db
+						.select({ one: sql`1` })
+						.from(groupMembers)
+						.where(and(eq(groupMembers.groupId, groupId), eq(groupMembers.userId, toUserId)))
+				)
+			)
+		)
+		.returning({ id: groups.id })
+	if (moved.length < 1) throw new CustomError("NotAMemberError", "Ownership can only go to a member of the group.")
 }
 
 export async function renameGroup(groupId: number, name: string) {
@@ -118,7 +150,7 @@ export const restoreGroup = (groupId: number, adminId: string) =>
 			.where(and(eq(groups.id, groupId), isNotNull(groups.deletedAt)))
 		if (!group) throw new CustomError("GroupNotDeletedError", "This group does not exist or is not deleted.")
 
-		// compared in SQL: postgres keeps microseconds, a JS Date would round them off
+		// compared in SQL as the robust choice (e.g. if a row were ever written with now(), which has microseconds a JS Date lacks)
 		await tx
 			.update(links)
 			.set({ deletedAt: null })
