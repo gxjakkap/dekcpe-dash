@@ -2,7 +2,7 @@ import { desc, eq } from "drizzle-orm"
 import { LinkIcon } from "lucide-react"
 import { DashboardPage, SectionCard, StatCard } from "@/components/dashboard-page"
 import { db } from "@/db"
-import { links, user } from "@/db/schema"
+import { groups, links, user } from "@/db/schema"
 import { requireUser } from "@/lib/session"
 import { AdminLinksTable } from "./admin-links-table"
 
@@ -10,8 +10,9 @@ export default async function AdminLinksPage() {
 	await requireUser(["admin"])
 
 	const allLinks = await db
-		.select({ slug: links.slug, url: links.url, createdAt: links.createdAt, createdBy: user.name })
+		.select({ slug: links.slug, url: links.url, createdAt: links.createdAt, createdBy: user.name, group: groups.name })
 		.from(links)
+		.innerJoin(groups, eq(groups.id, links.groupId))
 		.leftJoin(user, eq(links.createdBy, user.id))
 		.orderBy(desc(links.createdAt))
 

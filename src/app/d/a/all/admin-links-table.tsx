@@ -8,10 +8,14 @@ interface AdminLinksRow {
 	url: string
 	createdAt: Date
 	createdBy: string | null
+	group: string
 }
 
 const columns = linkColumns<AdminLinksRow>({
-	extra: [{ accessorKey: "createdBy", header: "Created by" }],
+	extra: [
+		{ accessorKey: "group", header: "Group" },
+		{ accessorKey: "createdBy", header: "Created by" },
+	],
 })
 
 export function AdminLinksTable({ data }: { data: AdminLinksRow[] }) {

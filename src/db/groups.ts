@@ -15,6 +15,15 @@ export const memberGroupIds = (userId: string) =>
 		.innerJoin(groups, eq(groups.id, groupMembers.groupId))
 		.where(and(eq(groupMembers.userId, userId), isNull(groups.deletedAt)))
 
+/** the user's live groups, earliest joined first (ties by id) */
+export const userGroups = (userId: string) =>
+	db
+		.select({ id: groups.id, name: groups.name })
+		.from(groups)
+		.innerJoin(groupMembers, eq(groupMembers.groupId, groups.id))
+		.where(and(eq(groupMembers.userId, userId), isNull(groups.deletedAt)))
+		.orderBy(asc(groupMembers.joinedAt), asc(groups.id))
+
 export async function getMembership(groupId: number, userId: string) {
 	const [row] = await db
 		.select({ group: groups })

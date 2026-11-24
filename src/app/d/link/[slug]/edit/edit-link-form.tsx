@@ -7,25 +7,36 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { useServerAction } from "zsa-react"
+import { type GroupOption, GroupSelect } from "@/components/group-select"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { destinationSchema } from "@/lib/links"
 import { editShortLink } from "../actions"
 
-const formSchema = z.object({ url: destinationSchema })
+const formSchema = z.object({ url: destinationSchema, groupId: z.number().int() })
 
-export default function EditLinkForm({ slug, dest }: { slug: string; dest: string }) {
+export default function EditLinkForm({
+	slug,
+	dest,
+	groupId,
+	groups,
+}: {
+	slug: string
+	dest: string
+	groupId: number
+	groups: GroupOption[]
+}) {
 	const { execute, isPending } = useServerAction(editShortLink)
 	const router = useRouter()
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-		defaultValues: { url: dest },
+		defaultValues: { url: dest, groupId },
 	})
 
 	const onSubmit = async (val: z.infer<typeof formSchema>) => {
-		const [, err] = await execute({ slug, url: val.url })
+		const [, err] = await execute({ slug, ...val })
 
 		if (err) {
 			toast.error(err.message)
@@ -49,6 +60,17 @@ export default function EditLinkForm({ slug, dest }: { slug: string; dest: strin
 								<FormControl>
 									<Input inputMode="url" placeholder="https://cpe.kmutt.ac.th/" {...field} className="w-full" />
 								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="groupId"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel className="text-lg">Group</FormLabel>
+								<GroupSelect groups={groups} value={field.value} onChange={field.onChange} />
 								<FormMessage />
 							</FormItem>
 						)}

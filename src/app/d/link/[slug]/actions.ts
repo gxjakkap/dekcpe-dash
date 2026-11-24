@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm"
 import z from "zod"
 import { db } from "@/db"
+import { getMembership } from "@/db/groups"
 import { getAccessibleLink } from "@/db/links"
 import { links } from "@/db/schema"
 import { CustomError } from "@/lib/errors"
@@ -17,10 +18,14 @@ async function requireAccessibleLink(slug: string, userId: string) {
 
 export const editShortLink = userProcedure
 	.createServerAction()
-	.input(z.object({ slug: z.string(), url: destinationSchema }))
+	.input(z.object({ slug: z.string(), url: destinationSchema, groupId: z.number().int().optional() }))
 	.handler(async ({ input, ctx }) => {
 		const link = await requireAccessibleLink(input.slug, ctx.session.user.id)
-		await db.update(links).set({ url: input.url, updatedAt: new Date() }).where(eq(links.id, link.id))
+		const groupId = input.groupId ?? link.groupId
+		if (groupId !== link.groupId && !(await getMembership(groupId, ctx.session.user.id))) {
+			throw new CustomError("GroupNotFoundError", "You are not a member of that group.")
+		}
+		await db.update(links).set({ url: input.url, groupId, updatedAt: new Date() }).where(eq(links.id, link.id))
 	})
 
 export const deleteShortLink = userProcedure
