@@ -1,4 +1,4 @@
-import { asc, count, desc, eq, sql } from "drizzle-orm"
+import { and, asc, count, desc, eq, isNull, sql } from "drizzle-orm"
 import { LinkIcon, UsersRoundIcon } from "lucide-react"
 import { notFound } from "next/navigation"
 import { DashboardPage, SectionCard } from "@/components/dashboard-page"
@@ -42,7 +42,9 @@ export async function GroupDetail({ groupId, controls }: { groupId: number; cont
 		.from(links)
 		.leftJoin(user, eq(user.id, links.createdBy))
 		.leftJoin(clicks, eq(clicks.linkId, links.id))
-		.where(sql`${links.groupId} = ${groupId} and ${links.deletedAt} is not distinct from ${group.deletedAt}`)
+		.where(
+			and(eq(links.groupId, groupId), group.deletedAt ? eq(links.deletedAt, group.deletedAt) : isNull(links.deletedAt))
+		)
 		.groupBy(links.id, user.name)
 		.orderBy(desc(links.createdAt))
 
