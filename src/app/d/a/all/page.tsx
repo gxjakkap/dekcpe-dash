@@ -10,9 +10,9 @@ export default async function AdminLinksPage() {
 	await requireUser(["admin"])
 
 	const allLinks = await db
-		.select({ slug: links.slug, url: links.url, createdAt: links.createdAt, owner: user.name })
+		.select({ slug: links.slug, url: links.url, createdAt: links.createdAt, createdBy: user.name })
 		.from(links)
-		.innerJoin(user, eq(links.owner, user.id))
+		.leftJoin(user, eq(links.createdBy, user.id))
 		.orderBy(desc(links.createdAt))
 
 	return (

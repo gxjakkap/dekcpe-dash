@@ -8,7 +8,7 @@ import { DashboardPage, SectionCard } from "@/components/dashboard-page"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { db } from "@/db"
 import { clickCity, clickCountry, clickRegion } from "@/db/clicks"
-import { getOwnedLink } from "@/db/links"
+import { getAccessibleLink } from "@/db/links"
 import { clicks } from "@/db/schema"
 import { shortLinkUrl } from "@/lib/links"
 import { requireUser } from "@/lib/session"
@@ -30,7 +30,7 @@ export default async function LinkPage({ params }: Props) {
 	const { slug } = await params
 	const session = await requireUser()
 
-	const link = await getOwnedLink(slug, session.user.id)
+	const link = await getAccessibleLink(slug, session.user.id)
 	if (!link) notFound()
 
 	const [stats] = await db.select({ clickCount: count() }).from(clicks).where(eq(clicks.linkId, link.id))

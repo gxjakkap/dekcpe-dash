@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 import { Card } from "@/components/ui/card"
-import { getOwnedLink } from "@/db/links"
+import { getAccessibleLink } from "@/db/links"
 import { requireUser } from "@/lib/session"
 import EditLinkForm from "./edit-link-form"
 
@@ -10,7 +10,7 @@ export default async function EditLinkPage({ params }: Props) {
 	const { slug } = await params
 	const session = await requireUser()
 
-	const link = await getOwnedLink(slug, session.user.id)
+	const link = await getAccessibleLink(slug, session.user.id)
 	if (!link) notFound()
 
 	return (

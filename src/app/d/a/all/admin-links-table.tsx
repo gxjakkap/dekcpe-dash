@@ -7,11 +7,11 @@ interface AdminLinksRow {
 	slug: string
 	url: string
 	createdAt: Date
-	owner: string
+	createdBy: string | null
 }
 
 const columns = linkColumns<AdminLinksRow>({
-	extra: [{ accessorKey: "owner", header: "Owner" }],
+	extra: [{ accessorKey: "createdBy", header: "Created by" }],
 })
 
 export function AdminLinksTable({ data }: { data: AdminLinksRow[] }) {

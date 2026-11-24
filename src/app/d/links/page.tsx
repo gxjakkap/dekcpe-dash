@@ -4,7 +4,7 @@ import Link from "next/link"
 import { DashboardPage, SectionCard } from "@/components/dashboard-page"
 import { Button } from "@/components/ui/button"
 import { db } from "@/db"
-import { ownLiveLinks } from "@/db/links"
+import { accessibleLiveLinks } from "@/db/links"
 import { clicks, links } from "@/db/schema"
 import { requireUser } from "@/lib/session"
 import { LinksTable } from "./links-table"
@@ -21,7 +21,7 @@ export default async function LinksPage() {
 		})
 		.from(links)
 		.leftJoin(clicks, eq(links.id, clicks.linkId))
-		.where(ownLiveLinks(session.user.id))
+		.where(accessibleLiveLinks(session.user.id))
 		.groupBy(links.id)
 		.orderBy(desc(links.createdAt))
 

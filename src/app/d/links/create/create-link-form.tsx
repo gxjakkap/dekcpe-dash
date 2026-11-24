@@ -21,7 +21,7 @@ import { createShortLink } from "./actions"
 
 const formSchema = z.object({ slug: slugSchema, url: destinationSchema })
 
-export default function CreateLinkForm() {
+export default function CreateLinkForm({ groupId }: { groupId: number }) {
 	const { execute, isPending } = useServerAction(createShortLink)
 	const router = useRouter()
 	const [genQr, setGenQr] = useState(false)
@@ -33,7 +33,7 @@ export default function CreateLinkForm() {
 	})
 
 	const onSubmit = async (val: z.infer<typeof formSchema>) => {
-		const [data, err] = await execute(val)
+		const [data, err] = await execute({ ...val, groupId })
 
 		if (err) {
 			if (err.code === SLUG_TAKEN) {
