@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoaderCircle } from "lucide-react"
+import { useEffect, useRef } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -14,12 +15,20 @@ import { redeemInviteCode } from "./actions"
 
 const formSchema = z.object({ code: redeemCodeSchema })
 
-export function RedeemForm() {
+export function RedeemForm({ code = "" }: { code?: string }) {
 	const { execute, isPending } = useServerAction(redeemInviteCode)
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-		defaultValues: { code: "" },
+		defaultValues: { code },
+	})
+
+	// an invite link (/invite?code=…) redeems on arrival; the ref stops Strict Mode's second effect run from redeeming twice
+	const autoSubmitted = useRef(false)
+	useEffect(() => {
+		if (!code || autoSubmitted.current) return
+		autoSubmitted.current = true
+		form.handleSubmit(onSubmit)()
 	})
 
 	const onSubmit = async (val: z.infer<typeof formSchema>) => {
