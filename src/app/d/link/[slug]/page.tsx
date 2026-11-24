@@ -8,8 +8,8 @@ import { DashboardPage, SectionCard } from "@/components/dashboard-page"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { db } from "@/db"
 import { clickCity, clickCountry, clickRegion } from "@/db/clicks"
-import { getOwnedLink } from "@/db/links"
-import { clicks } from "@/db/schema"
+import { getAccessibleLink } from "@/db/links"
+import { clicks, groups, user } from "@/db/schema"
 import { shortLinkUrl } from "@/lib/links"
 import { requireUser } from "@/lib/session"
 import { formatDate, stripProtocol } from "@/lib/utils"
@@ -30,8 +30,14 @@ export default async function LinkPage({ params }: Props) {
 	const { slug } = await params
 	const session = await requireUser()
 
-	const link = await getOwnedLink(slug, session.user.id)
+	const link = await getAccessibleLink(slug, session.user.id)
 	if (!link) notFound()
+
+	const [{ group, createdBy }] = await db
+		.select({ group: { id: groups.id, name: groups.name }, createdBy: user.name })
+		.from(groups)
+		.leftJoin(user, eq(user.id, link.createdBy ?? ""))
+		.where(eq(groups.id, link.groupId))
 
 	const [stats] = await db.select({ clickCount: count() }).from(clicks).where(eq(clicks.linkId, link.id))
 	const shortlink = shortLinkUrl(link.slug)
@@ -62,6 +68,8 @@ export default async function LinkPage({ params }: Props) {
 						dest={link.url}
 						dateCreated={formatDate(link.createdAt)}
 						dateModified={formatDate(link.updatedAt)}
+						group={group}
+						createdBy={createdBy}
 					/>
 					<SectionCard icon={MapIcon} title="Clicks by Location">
 						<ClickMap

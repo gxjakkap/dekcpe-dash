@@ -127,7 +127,7 @@ function UserActions({ user }: { user: UserRow }) {
 			<EditRoleDialog user={user} />
 			<DeleteDialog
 				title={`Delete ${user.name}?`}
-				description="Their account will be removed. This can't be undone."
+				description="Their account will be removed. Groups they own pass to their longest-standing member; groups with no other members are deleted. This can't be undone."
 				confirmLabel="Delete User"
 				onConfirm={onDelete}>
 				<Button

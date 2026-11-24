@@ -10,6 +10,7 @@ import { toast } from "sonner"
 import { z } from "zod"
 import { useServerAction } from "zsa-react"
 import { copyWithToast } from "@/components/copy-button"
+import { type GroupOption, GroupSelect } from "@/components/group-select"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -19,9 +20,9 @@ import { destinationSchema, SLUG_TAKEN, shortLinkUrl, slugSchema } from "@/lib/l
 import { stripProtocol } from "@/lib/utils"
 import { createShortLink } from "./actions"
 
-const formSchema = z.object({ slug: slugSchema, url: destinationSchema })
+const formSchema = z.object({ slug: slugSchema, url: destinationSchema, groupId: z.number().int() })
 
-export default function CreateLinkForm() {
+export default function CreateLinkForm({ groups }: { groups: GroupOption[] }) {
 	const { execute, isPending } = useServerAction(createShortLink)
 	const router = useRouter()
 	const [genQr, setGenQr] = useState(false)
@@ -29,7 +30,7 @@ export default function CreateLinkForm() {
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-		defaultValues: { slug: "", url: "" },
+		defaultValues: { slug: "", url: "", groupId: groups[0].id },
 	})
 
 	const onSubmit = async (val: z.infer<typeof formSchema>) => {
@@ -48,7 +49,7 @@ export default function CreateLinkForm() {
 	}
 
 	const createAnother = () => {
-		form.reset({ slug: "", url: "" })
+		form.reset({ slug: "", url: "", groupId: form.getValues("groupId") })
 		setShortLink("")
 	}
 
@@ -125,6 +126,17 @@ export default function CreateLinkForm() {
 								<FormControl>
 									<Input inputMode="url" placeholder="https://cpe.kmutt.ac.th/" {...field} className="w-full" />
 								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="groupId"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel className="text-lg">Group</FormLabel>
+								<GroupSelect groups={groups} value={field.value} onChange={field.onChange} />
 								<FormMessage />
 							</FormItem>
 						)}

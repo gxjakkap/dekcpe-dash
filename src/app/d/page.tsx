@@ -4,7 +4,7 @@ import { BarChart3, ChartLine, LinkIcon } from "lucide-react"
 import { DashboardPage, SectionCard, StatCard } from "@/components/dashboard-page"
 import { db } from "@/db"
 import { clickCountry as country } from "@/db/clicks"
-import { ownLiveLinks } from "@/db/links"
+import { accessibleLiveLinks } from "@/db/links"
 import { clicks, links } from "@/db/schema"
 import { requireUser } from "@/lib/session"
 import { topDevices } from "./device"
@@ -12,7 +12,7 @@ import { QuickAnalyticsTable } from "./quick-analytics-table"
 
 export default async function DashboardHome() {
 	const session = await requireUser()
-	const mine = ownLiveLinks(session.user.id)
+	const mine = accessibleLiveLinks(session.user.id)
 
 	const [totals] = await db
 		.select({ links: countDistinct(links.id), clicks: count(clicks.id) })

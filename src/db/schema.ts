@@ -1,4 +1,4 @@
-import { boolean, integer, jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core"
+import { boolean, integer, jsonb, pgTable, primaryKey, text, timestamp } from "drizzle-orm/pg-core"
 
 import { ROLES } from "@/lib/const"
 
@@ -9,10 +9,33 @@ export const links = pgTable("links", {
 	createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 	deletedAt: timestamp("deleted_at", { withTimezone: true }),
-	owner: text("owner")
+	groupId: integer("group_id")
 		.notNull()
-		.references(() => user.id, { onDelete: "cascade" }),
+		.references(() => groups.id),
+	createdBy: text("created_by").references(() => user.id, { onDelete: "set null" }),
 })
+
+export const groups = pgTable("groups", {
+	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+	name: text("name").notNull(),
+	ownerId: text("owner_id").references(() => user.id, { onDelete: "set null" }),
+	createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+	deletedAt: timestamp("deleted_at", { withTimezone: true }),
+})
+
+export const groupMembers = pgTable(
+	"group_members",
+	{
+		groupId: integer("group_id")
+			.notNull()
+			.references(() => groups.id, { onDelete: "cascade" }),
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		joinedAt: timestamp("joined_at", { withTimezone: true }).defaultNow().notNull(),
+	},
+	(t) => [primaryKey({ columns: [t.groupId, t.userId] })]
+)
 
 export const clicks = pgTable("clicks", {
 	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),

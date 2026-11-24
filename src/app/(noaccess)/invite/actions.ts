@@ -3,6 +3,7 @@
 import { count, eq } from "drizzle-orm"
 import z from "zod"
 import { db } from "@/db"
+import { ensurePersonalGroup } from "@/db/groups"
 import { invite, inviteUsage, user } from "@/db/schema"
 import { ROLES } from "@/lib/const"
 import { CustomError } from "@/lib/errors"
@@ -30,6 +31,7 @@ export const redeemInviteCode = authedProcedure
 		if (accessOf(session.user) !== "no-access") return { alreadyHadAccess: true }
 
 		await db.update(user).set({ role: ROLES.USER }).where(eq(user.id, session.user.id))
+		await ensurePersonalGroup(session.user.id)
 		await db.insert(inviteUsage).values({ inviteId: inv.id, userId: session.user.id })
 
 		return { alreadyHadAccess: false }

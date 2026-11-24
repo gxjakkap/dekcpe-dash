@@ -1,4 +1,5 @@
 import { Calendar, Clock, ExternalLink } from "lucide-react"
+import Link from "next/link"
 import { CopyButton } from "@/components/copy-button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
@@ -7,11 +8,15 @@ export default function LinkInfo({
 	dest,
 	dateCreated,
 	dateModified,
+	group,
+	createdBy,
 }: {
 	shortlink: string
 	dest: string
 	dateCreated: string
 	dateModified: string
+	group: { id: number; name: string }
+	createdBy: string | null
 }) {
 	return (
 		<Card className="h-fit">
@@ -54,6 +59,18 @@ export default function LinkInfo({
 							Modified
 						</div>
 						<div className="text-sm">{dateModified}</div>
+					</div>
+					<div className="space-y-2">
+						<div className="text-sm font-medium text-muted-foreground">Group</div>
+						<div className="text-sm">
+							<Link href={`/d/groups/${group.id}`} className="hover:underline">
+								{group.name}
+							</Link>
+						</div>
+					</div>
+					<div className="space-y-2">
+						<div className="text-sm font-medium text-muted-foreground">Created by</div>
+						<div className="text-sm">{createdBy ?? "—"}</div>
 					</div>
 				</div>
 			</CardContent>
