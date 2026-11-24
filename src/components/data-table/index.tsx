@@ -38,6 +38,8 @@ interface DataTableProps<TData, TValue> {
 	/** Adds a checkbox column; rendered in the toolbar while rows are selected. Needs `getRowId`. */
 	bulkActions?: (selected: TData[], clear: () => void) => ReactNode
 	getRowId?: (row: TData) => string
+	/** accessible name for a row's checkbox, e.g. its slug */
+	rowLabel?: (row: TData) => string
 }
 
 const pageParam = parseAsInteger.withOptions({ history: "push", scroll: false, shallow: true })
@@ -51,6 +53,7 @@ export function DataTable<TData, TValue>({
 	paramPrefix,
 	bulkActions,
 	getRowId,
+	rowLabel,
 }: DataTableProps<TData, TValue>) {
 	const router = useRouter()
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -86,13 +89,16 @@ export function DataTable<TData, TValue>({
 									aria-label="Select all rows on this page"
 									className="size-4 cursor-pointer accent-primary"
 									checked={table.getIsAllPageRowsSelected()}
+									ref={(el) => {
+										if (el) el.indeterminate = table.getIsSomePageRowsSelected()
+									}}
 									onChange={table.getToggleAllPageRowsSelectedHandler()}
 								/>
 							),
 							cell: ({ row }) => (
 								<input
 									type="checkbox"
-									aria-label="Select row"
+									aria-label={rowLabel ? `Select ${rowLabel(row.original)}` : "Select row"}
 									className="size-4 cursor-pointer accent-primary"
 									checked={row.getIsSelected()}
 									onChange={row.getToggleSelectedHandler()}
@@ -102,7 +108,7 @@ export function DataTable<TData, TValue>({
 						...columns,
 					]
 				: columns,
-		[columns, bulkActions]
+		[columns, bulkActions, rowLabel]
 	)
 
 	const table = useReactTable({
@@ -167,13 +173,20 @@ export function DataTable<TData, TValue>({
 											? (e) => {
 													// links and buttons in the row, and dialogs portalled out of it, handle their own clicks
 													const target = e.target as Element
-													if (!e.currentTarget.contains(target) || target.closest("a, button, input")) return
+													if (
+														!e.currentTarget.contains(target) ||
+														target.closest("a, button, input, [data-select-cell]")
+													)
+														return
 													router.push(rowHref(row.original))
 												}
 											: undefined
 									}>
 									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id} className="first:pl-4 last:pr-4">
+										<TableCell
+											key={cell.id}
+											className="first:pl-4 last:pr-4"
+											data-select-cell={cell.column.id === "select" ? "" : undefined}>
 											{flexRender(cell.column.columnDef.cell, cell.getContext())}
 										</TableCell>
 									))}

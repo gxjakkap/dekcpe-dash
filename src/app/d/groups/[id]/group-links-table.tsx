@@ -48,6 +48,7 @@ export function GroupLinksTable({
 			columns={columns(linkable)}
 			data={data}
 			getRowId={(row) => row.slug}
+			rowLabel={(row) => row.slug}
 			bulkActions={
 				bulk
 					? (selected, clear) => (

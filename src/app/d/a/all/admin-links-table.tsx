@@ -26,6 +26,7 @@ export function AdminLinksTable({ data, groups }: { data: AdminLinksRow[]; group
 			columns={columns}
 			data={data}
 			getRowId={(row) => row.slug}
+			rowLabel={(row) => row.slug}
 			bulkActions={(selected, clear) => (
 				<BulkLinkActions
 					slugs={selected.map((r) => r.slug)}

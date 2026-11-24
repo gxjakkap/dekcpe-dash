@@ -1,11 +1,10 @@
 "use server"
 
-import { and, inArray } from "drizzle-orm"
+import { and, eq, inArray, isNull } from "drizzle-orm"
 import z from "zod"
 import { db } from "@/db"
-import { getMembership } from "@/db/groups"
 import { accessibleLiveLinks } from "@/db/links"
-import { links } from "@/db/schema"
+import { groupMembers, groups, links } from "@/db/schema"
 import { CustomError } from "@/lib/errors"
 import { userProcedure } from "@/lib/server-actions"
 
@@ -18,12 +17,17 @@ export const bulkMoveLinks = userProcedure
 	.input(z.object({ slugs, groupId: z.number().int().positive() }))
 	.handler(async ({ input, ctx }) => {
 		const userId = ctx.session.user.id
-		if (!(await getMembership(input.groupId, userId))) {
-			throw new CustomError("GroupNotFoundError", "You are not a member of that group.")
-		}
 		const wanted = [...new Set(input.slugs)]
 		// all-or-nothing: throwing inside the transaction rolls the update back
 		await db.transaction(async (tx) => {
+			// FOR SHARE keeps the target live and the caller a member until the update commits
+			const [target] = await tx
+				.select({ id: groups.id })
+				.from(groups)
+				.innerJoin(groupMembers, and(eq(groupMembers.groupId, groups.id), eq(groupMembers.userId, userId)))
+				.where(and(eq(groups.id, input.groupId), isNull(groups.deletedAt)))
+				.for("share")
+			if (!target) throw new CustomError("GroupNotFoundError", "You are not a member of that group.")
 			const moved = await tx
 				.update(links)
 				.set({ groupId: input.groupId, updatedAt: new Date() })

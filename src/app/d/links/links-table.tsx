@@ -71,6 +71,7 @@ export function LinksTable({ data, groups }: { data: LinksRow[]; groups: { id: n
 			columns={columns}
 			data={data}
 			getRowId={(row) => row.slug}
+			rowLabel={(row) => row.slug}
 			bulkActions={(selected, clear) => (
 				<BulkLinkActions
 					slugs={selected.map((r) => r.slug)}
