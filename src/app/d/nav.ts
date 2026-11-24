@@ -1,4 +1,4 @@
-import { Home, LinkIcon, Send, Unlink, Users } from "lucide-react"
+import { Home, LinkIcon, Send, Unlink, Users, UsersRound } from "lucide-react"
 
 export interface NavItem {
 	title: string
@@ -19,6 +19,12 @@ export const items: NavItem[] = [
 		url: "/d/links",
 		icon: LinkIcon,
 		match: "/d/link",
+	},
+	{
+		title: "Groups",
+		url: "/d/groups",
+		icon: UsersRound,
+		match: "/d/groups",
 	},
 ]
 
