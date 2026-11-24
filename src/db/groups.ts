@@ -44,7 +44,7 @@ export const createGroup = (name: string, ownerId: string) =>
 /** gives the user a group named after them, unless they already belong to one (even a deleted one) */
 export const ensurePersonalGroup = (userId: string) =>
 	db.transaction(async (tx) => {
-		// the row lock serialises concurrent calls, so the check and the insert are atomic
+		// FOR UPDATE guards multi-instance deploys (one instance already serialises on its single-connection pool)
 		const [row] = await tx.select({ name: user.name }).from(user).where(eq(user.id, userId)).for("update")
 		if (!row) return
 		const [member] = await tx
@@ -63,7 +63,7 @@ export async function addMember(groupId: number, userId: string) {
 }
 
 export async function removeMember(groupId: number, userId: string) {
-	// one guarded statement: the owner's row is never deleted, even if ownership moves meanwhile
+	// one guarded statement, atomic on its own; the single-connection pool serialises it with transfers in one instance (across connections, a concurrent transfer-to-X and remove-X could both succeed)
 	const removed = await db
 		.delete(groupMembers)
 		.where(
@@ -91,7 +91,7 @@ export async function removeMember(groupId: number, userId: string) {
 }
 
 export async function transferOwnership(groupId: number, toUserId: string) {
-	// one guarded statement: only succeeds while the target still has a member row
+	// one guarded statement, atomic on its own; the single-connection pool serialises it with removals in one instance (across connections, a concurrent transfer-to-X and remove-X could both succeed)
 	const moved = await db
 		.update(groups)
 		.set({ ownerId: toUserId })

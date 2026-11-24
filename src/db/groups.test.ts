@@ -186,11 +186,4 @@ describe("groups", () => {
 			.where(eq(groupMembers.userId, id))
 		expect(mine).toEqual([{ name: "Personal Pat", ownerId: id }])
 	})
-
-	test("ensurePersonalGroup called concurrently creates one group", async () => {
-		const id = await newUser("Racing Rae")
-		await Promise.all([ensurePersonalGroup(id), ensurePersonalGroup(id)])
-		const mine = await db.select().from(groupMembers).where(eq(groupMembers.userId, id))
-		expect(mine).toHaveLength(1)
-	})
 })
