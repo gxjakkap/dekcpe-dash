@@ -5,7 +5,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { authClient } from "@/lib/auth-client"
 
-export default function SignIn() {
+export default function SignIn({ callbackURL }: { callbackURL: string }) {
 	const [loading, setLoading] = useState(false)
 
 	return (
@@ -24,7 +24,7 @@ export default function SignIn() {
 						await authClient.signIn.social(
 							{
 								provider: "microsoft",
-								callbackURL: "/d",
+								callbackURL,
 							},
 							{
 								onRequest: () => {

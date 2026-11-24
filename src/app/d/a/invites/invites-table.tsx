@@ -3,13 +3,14 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { ColumnDef } from "@tanstack/react-table"
 import { startOfToday } from "date-fns"
-import { CalendarIcon, PlusIcon, Trash2 } from "lucide-react"
+import { CalendarIcon, LinkIcon, PlusIcon, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import type { z } from "zod"
 import { useServerAction } from "zsa-react"
+import { copyWithToast } from "@/components/copy-button"
 import { DataTable } from "@/components/data-table"
 import { DeleteDialog } from "@/components/delete-dialog"
 import { Button } from "@/components/ui/button"
@@ -220,7 +221,21 @@ const columns: ColumnDef<InviteRow>[] = [
 	{
 		id: "action",
 		header: "Action",
-		cell: ({ row }) => <DeleteInviteButton code={row.original.code} />,
+		cell: ({ row }) => (
+			<div className="flex">
+				<Button
+					variant="ghost"
+					size="icon"
+					aria-label={`Copy invite link for ${row.original.code}`}
+					className="h-8 w-8 p-0"
+					onClick={() =>
+						copyWithToast(`${window.location.origin}/invite?code=${encodeURIComponent(row.original.code)}`)
+					}>
+					<LinkIcon className="h-4 w-4" />
+				</Button>
+				<DeleteInviteButton code={row.original.code} />
+			</div>
+		),
 	},
 ]
 
