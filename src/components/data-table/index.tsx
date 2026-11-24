@@ -32,6 +32,8 @@ interface DataTableProps<TData, TValue> {
 	rowHref?: (row: TData) => string
 	emptyState?: ReactNode
 	toolbar?: ReactNode
+	/** Namespaces the page/perPage URL params so several tables can share a page. */
+	paramPrefix?: string
 }
 
 const pageParam = parseAsInteger.withOptions({ history: "push", scroll: false, shallow: true })
@@ -42,11 +44,15 @@ export function DataTable<TData, TValue>({
 	rowHref,
 	emptyState = "No results.",
 	toolbar,
+	paramPrefix,
 }: DataTableProps<TData, TValue>) {
 	const router = useRouter()
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-	const [page, setPage] = useQueryState("page", pageParam.withDefault(1))
-	const [perPage, setPerPage] = useQueryState("perPage", pageParam.withDefault(10))
+	const [page, setPage] = useQueryState(paramPrefix ? `${paramPrefix}Page` : "page", pageParam.withDefault(1))
+	const [perPage, setPerPage] = useQueryState(
+		paramPrefix ? `${paramPrefix}PerPage` : "perPage",
+		pageParam.withDefault(10)
+	)
 
 	const pagination: PaginationState = { pageIndex: page - 1, pageSize: perPage }
 

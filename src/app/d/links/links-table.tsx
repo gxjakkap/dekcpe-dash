@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { parseAsString, useQueryState } from "nuqs"
+import { parseAsInteger, parseAsString, useQueryState } from "nuqs"
 import { DataTable } from "@/components/data-table"
 import { linkColumns } from "@/components/link-columns"
 import { Badge } from "@/components/ui/badge"
@@ -40,13 +40,19 @@ const ALL = "all"
 
 export function LinksTable({ data, groups }: { data: LinksRow[]; groups: { id: number; name: string }[] }) {
 	const [group, setGroup] = useQueryState("group", parseAsString.withOptions({ shallow: false }))
+	const [, setPage] = useQueryState("page", parseAsInteger)
 	// the server ignores unknown ids, so the select does too
 	const current = groups.some((g) => String(g.id) === group) ? (group as string) : ALL
 
 	return (
 		<DataTable
 			toolbar={
-				<Select value={current} onValueChange={(v) => setGroup(v === ALL ? null : v)}>
+				<Select
+					value={current}
+					onValueChange={(v) => {
+						void setPage(null)
+						void setGroup(v === ALL ? null : v)
+					}}>
 					<SelectTrigger className="w-48">
 						<SelectValue />
 					</SelectTrigger>

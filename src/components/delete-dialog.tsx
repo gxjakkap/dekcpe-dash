@@ -17,12 +17,22 @@ interface DeleteDialogProps {
 	title: string
 	description: string
 	confirmLabel: string
+	pendingLabel?: string
+	destructive?: boolean
 	/** Resolves true once deleted; the dialog stays open otherwise. */
 	onConfirm: () => Promise<boolean>
 	children: ReactNode
 }
 
-export function DeleteDialog({ title, description, confirmLabel, onConfirm, children }: DeleteDialogProps) {
+export function DeleteDialog({
+	title,
+	description,
+	confirmLabel,
+	pendingLabel = "Deleting…",
+	destructive = true,
+	onConfirm,
+	children,
+}: DeleteDialogProps) {
 	const [open, setOpen] = useState(false)
 	const [isPending, setPending] = useState(false)
 
@@ -48,8 +58,8 @@ export function DeleteDialog({ title, description, confirmLabel, onConfirm, chil
 							Cancel
 						</Button>
 					</DialogClose>
-					<Button variant="destructive" onClick={confirm} disabled={isPending}>
-						{isPending ? "Deleting…" : confirmLabel}
+					<Button variant={destructive ? "destructive" : "default"} onClick={confirm} disabled={isPending}>
+						{isPending ? pendingLabel : confirmLabel}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

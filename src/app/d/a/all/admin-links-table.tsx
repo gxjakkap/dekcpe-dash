@@ -14,7 +14,7 @@ interface AdminLinksRow {
 const columns = linkColumns<AdminLinksRow>({
 	extra: [
 		{ accessorKey: "group", header: "Group" },
-		{ accessorKey: "createdBy", header: "Created by" },
+		{ accessorKey: "createdBy", header: "Created by", cell: ({ row }) => row.original.createdBy ?? "—" },
 	],
 })
 

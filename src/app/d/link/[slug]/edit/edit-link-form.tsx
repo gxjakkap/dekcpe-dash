@@ -43,7 +43,16 @@ export default function EditLinkForm({
 			return
 		}
 
-		toast.success(`/${slug} now points to ${val.url}`)
+		const urlChanged = val.url !== dest
+		const groupChanged = val.groupId !== groupId
+		const groupName = groups.find((g) => g.id === val.groupId)?.name
+		toast.success(
+			urlChanged && groupChanged
+				? `/${slug} now points to ${val.url} in ${groupName}`
+				: groupChanged
+					? `Moved /${slug} to ${groupName}`
+					: `/${slug} now points to ${val.url}`
+		)
 		router.push(`/d/link/${slug}`)
 	}
 

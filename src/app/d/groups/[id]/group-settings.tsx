@@ -103,6 +103,7 @@ export function GroupSettings({
 							title={`Leave ${name}?`}
 							description="You will lose access to this group's links. The owner can add you back."
 							confirmLabel="Leave Group"
+							pendingLabel="Leaving…"
 							onConfirm={() => done(leave.execute({ groupId }), "You left the group")}>
 							<Button variant="outline">
 								<LogOutIcon /> Leave Group

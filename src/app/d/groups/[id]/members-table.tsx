@@ -94,6 +94,8 @@ function RowActions({ groupId, member }: { groupId: number; member: MemberRow })
 				title={`Make ${member.name} the owner?`}
 				description="They will be able to manage members and delete the group. You stay a member."
 				confirmLabel="Make Owner"
+				destructive={false}
+				pendingLabel="Saving…"
 				onConfirm={() => run(transfer.execute({ groupId, userId: member.userId }), `${member.name} is now the owner`)}>
 				<Button variant="ghost" size="icon" aria-label={`Make ${member.name} the owner`} className="h-8 w-8 p-0">
 					<CrownIcon className="h-4 w-4" />
@@ -103,6 +105,7 @@ function RowActions({ groupId, member }: { groupId: number; member: MemberRow })
 				title={`Remove ${member.name}?`}
 				description="They lose access to this group's links. Links they created stay in the group."
 				confirmLabel="Remove"
+				pendingLabel="Removing…"
 				onConfirm={() => run(remove.execute({ groupId, userId: member.userId }), `Removed ${member.name}`)}>
 				<Button
 					variant="ghost"
@@ -153,6 +156,7 @@ export function MembersTable({
 	)
 	return (
 		<DataTable
+			paramPrefix="members"
 			columns={columns}
 			data={data}
 			toolbar={controls === "owner" ? <AddMemberForm groupId={groupId} /> : undefined}
